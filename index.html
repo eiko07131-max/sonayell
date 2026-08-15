@@ -1,0 +1,1381 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>そなYELL</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+
+html,body{
+  margin:0;
+  padding:0;
+  width:100%;
+  min-height:100%;
+}
+
+body{
+  font-family:
+    "Hiragino Kaku Gothic ProN",
+    "Yu Gothic",
+    "Meiryo",
+    sans-serif;
+  color:#36563b;
+  background:#eef8e9;
+}
+
+button{
+  font:inherit;
+  border:0;
+  cursor:pointer;
+}
+
+.screen{
+  display:none;
+  min-height:100vh;
+}
+
+.screen.active{
+  display:flex;
+}
+
+
+/* ========================================
+   起動画面
+======================================== */
+
+#startScreen{
+  position:relative;
+  overflow:hidden;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-end;
+
+  background:
+    linear-gradient(
+      180deg,
+      #a9dcf5 0%,
+      #d8f1f8 30%,
+      #e9f5cf 62%,
+      #8fc77e 100%
+    );
+
+  padding:24px 18px 30px;
+}
+
+
+/* 空 */
+
+.sun{
+  position:absolute;
+  width:100px;
+  height:100px;
+  border-radius:50%;
+  background:#fff2a6;
+  top:55px;
+  right:45px;
+  box-shadow:0 0 35px rgba(255,240,150,.8);
+}
+
+.cloud{
+  position:absolute;
+  width:125px;
+  height:34px;
+  background:rgba(255,255,255,.82);
+  border-radius:30px;
+}
+
+.cloud::before,
+.cloud::after{
+  content:"";
+  position:absolute;
+  background:white;
+  border-radius:50%;
+}
+
+.cloud::before{
+  width:52px;
+  height:52px;
+  left:20px;
+  top:-23px;
+}
+
+.cloud::after{
+  width:62px;
+  height:62px;
+  right:14px;
+  top:-30px;
+}
+
+.cloud1{
+  left:-25px;
+  top:145px;
+}
+
+.cloud2{
+  right:-35px;
+  top:235px;
+}
+
+
+/* 虹 */
+
+.rainbow{
+  position:absolute;
+  top:45px;
+  left:50%;
+  transform:translateX(-50%);
+  width:320px;
+  height:165px;
+  border-radius:320px 320px 0 0;
+  border:14px solid rgba(255,122,122,.48);
+  border-bottom:0;
+  box-shadow:
+    0 -14px 0 rgba(255,207,85,.48),
+    0 -28px 0 rgba(113,194,113,.48),
+    0 -42px 0 rgba(100,166,230,.42);
+}
+
+
+/* ========================================
+   大きな実のなる木
+======================================== */
+
+.tree{
+  position:absolute;
+  width:330px;
+  height:410px;
+  left:50%;
+  bottom:128px;
+  transform:translateX(-50%);
+}
+
+.trunk{
+  position:absolute;
+  width:48px;
+  height:220px;
+  left:141px;
+  bottom:0;
+  background:#805534;
+  border-radius:28px;
+  z-index:1;
+}
+
+.branch{
+  position:absolute;
+  height:22px;
+  background:#805534;
+  border-radius:20px;
+  transform-origin:left center;
+  z-index:1;
+}
+
+.branch.left{
+  width:125px;
+  left:151px;
+  bottom:165px;
+  transform:rotate(-38deg);
+}
+
+.branch.right{
+  width:120px;
+  left:153px;
+  bottom:126px;
+  transform:rotate(38deg);
+}
+
+.crown{
+  position:absolute;
+  width:280px;
+  height:270px;
+  left:25px;
+  top:0;
+  border-radius:48% 52% 50% 50%;
+  background:#4e9956;
+  z-index:2;
+
+  box-shadow:
+    -48px 60px 0 #63a85e,
+    48px 65px 0 #438a4d,
+    0 104px 0 #579e59;
+}
+
+
+/* 実 */
+
+.fruit{
+  position:absolute;
+  width:28px;
+  height:28px;
+  border-radius:50%;
+  background:#f4bb46;
+  box-shadow:
+    inset -5px -5px 0 #d68d31;
+  z-index:4;
+}
+
+.fruit::before{
+  content:"";
+  position:absolute;
+  width:9px;
+  height:4px;
+  background:#4d874c;
+  border-radius:8px;
+  top:-2px;
+  left:15px;
+  transform:rotate(-25deg);
+}
+
+.f1{left:82px;top:48px}
+.f2{left:178px;top:62px}
+.f3{left:55px;top:119px}
+.f4{left:132px;top:106px}
+.f5{left:218px;top:132px}
+.f6{left:102px;top:175px}
+.f7{left:181px;top:193px}
+
+
+/* ========================================
+   ロゴ
+======================================== */
+
+.logoArea{
+  position:relative;
+  z-index:10;
+  text-align:center;
+  margin-bottom:344px;
+}
+
+.logo{
+  margin:0;
+  color:#2f773f;
+  font-size:48px;
+  letter-spacing:3px;
+  text-shadow:
+    2px 3px 0 white;
+}
+
+.catch{
+  margin:8px 0 0;
+  font-size:15px;
+  font-weight:bold;
+  color:#3f6244;
+}
+
+.worldMessage{
+  margin:6px 0 0;
+  font-size:14px;
+  font-weight:bold;
+  color:#547257;
+}
+
+
+/* ========================================
+   森の仲間
+======================================== */
+
+.characters{
+  position:absolute;
+  z-index:9;
+  bottom:154px;
+  left:0;
+  width:100%;
+  text-align:center;
+  white-space:nowrap;
+}
+
+.character{
+  display:inline-block;
+  margin:0 2px;
+  font-size:42px;
+  filter:drop-shadow(0 3px 2px rgba(0,0,0,.12));
+}
+
+
+/* 隠れキャラ */
+
+.hiddenCharacter{
+  position:absolute;
+  right:8%;
+  bottom:230px;
+  z-index:8;
+  font-size:23px;
+  opacity:.55;
+}
+
+
+/* ========================================
+   起動ボタン
+======================================== */
+
+.startArea{
+  position:relative;
+  z-index:20;
+  width:100%;
+  max-width:430px;
+}
+
+.startMessage{
+  background:rgba(255,255,255,.9);
+  border-radius:20px;
+  padding:12px 15px;
+  margin-bottom:9px;
+  text-align:center;
+  font-size:14px;
+  font-weight:bold;
+  box-shadow:0 5px 18px rgba(50,90,50,.12);
+}
+
+.startButton{
+  display:block;
+  width:100%;
+  padding:15px;
+  margin:6px 0;
+  border-radius:17px;
+
+  background:#4e9956;
+  color:white;
+
+  font-size:17px;
+  font-weight:bold;
+
+  box-shadow:0 5px 0 #37763f;
+}
+
+.startButton:active{
+  transform:translateY(3px);
+  box-shadow:0 2px 0 #37763f;
+}
+
+.startButton.secondary{
+  background:white;
+  color:#4b8953;
+  box-shadow:0 4px 0 #c2dbc3;
+}
+
+
+/* ========================================
+   共通ヘッダー
+======================================== */
+
+.header{
+  width:100%;
+  padding:14px 17px;
+
+  background:white;
+  border-bottom:1px solid #dbe9d8;
+
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+
+  position:sticky;
+  top:0;
+  z-index:50;
+}
+
+.headerLogo{
+  font-size:22px;
+  font-weight:bold;
+  color:#3d8849;
+}
+
+.yellBadge{
+  background:#fff1a6;
+  color:#755c20;
+  border-radius:20px;
+  padding:7px 12px;
+  font-weight:bold;
+  font-size:14px;
+}
+
+
+/* ========================================
+   共通コンテンツ
+======================================== */
+
+.pageContent{
+  width:100%;
+  max-width:720px;
+  margin:0 auto;
+  padding:20px 18px 35px;
+}
+
+.pageTitle{
+  margin:4px 0 7px;
+  color:#397a44;
+}
+
+.pageLead{
+  margin:0 0 18px;
+  line-height:1.7;
+  font-size:14px;
+}
+
+
+/* ========================================
+   ホーム
+======================================== */
+
+#homeScreen{
+  flex-direction:column;
+  background:#f5faef;
+}
+
+.welcomeCard{
+  background:
+    linear-gradient(
+      135deg,
+      #def3d6,
+      #fff3b8
+    );
+
+  border-radius:25px;
+  padding:22px 20px;
+  text-align:center;
+  box-shadow:0 5px 18px rgba(50,90,50,.08);
+}
+
+.welcomeCard h2{
+  margin:0 0 7px;
+  color:#397a44;
+}
+
+.welcomeCard p{
+  margin:0;
+  font-size:14px;
+  line-height:1.6;
+}
+
+.homeCard{
+  margin-top:16px;
+  padding:20px;
+  background:white;
+  border-radius:22px;
+  box-shadow:0 4px 15px rgba(50,90,50,.08);
+}
+
+.homeCard h3{
+  margin:0 0 8px;
+  color:#397a44;
+}
+
+.homeCard p{
+  line-height:1.7;
+  font-size:14px;
+}
+
+.mainButton{
+  width:100%;
+  padding:15px;
+  border-radius:16px;
+  background:#4e9956;
+  color:white;
+  font-weight:bold;
+  font-size:16px;
+  box-shadow:0 4px 0 #37763f;
+}
+
+.mainButton:active{
+  transform:translateY(3px);
+  box-shadow:0 1px 0 #37763f;
+}
+
+
+/* ========================================
+   我が家の備え
+======================================== */
+
+#prepareScreen{
+  flex-direction:column;
+  background:#f5faef;
+}
+
+.backButton{
+  padding:9px 14px;
+  margin-bottom:12px;
+  border-radius:14px;
+  background:white;
+  color:#4b7651;
+  box-shadow:0 2px 7px rgba(50,90,50,.07);
+}
+
+.categoryButton{
+  width:100%;
+  margin:7px 0;
+  padding:17px;
+
+  display:flex;
+  align-items:center;
+  gap:15px;
+
+  text-align:left;
+
+  background:white;
+  border-radius:20px;
+
+  box-shadow:0 3px 12px rgba(50,90,50,.08);
+}
+
+.categoryButton:active{
+  transform:scale(.985);
+}
+
+.categoryIcon{
+  width:48px;
+  height:48px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+
+  font-size:30px;
+  background:#edf7e9;
+  border-radius:15px;
+}
+
+.categoryName{
+  font-size:17px;
+  font-weight:bold;
+  color:#397844;
+}
+
+.categoryDescription{
+  margin-top:4px;
+  font-size:12px;
+  color:#78907a;
+}
+
+
+/* ========================================
+   チェック画面
+======================================== */
+
+#checkScreen{
+  flex-direction:column;
+  background:#f5faef;
+}
+
+.checkCard{
+  margin:8px 0;
+  padding:16px;
+  background:white;
+  border-radius:18px;
+  box-shadow:0 3px 10px rgba(50,90,50,.06);
+}
+
+.checkLabel{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  line-height:1.5;
+  font-size:15px;
+}
+
+.checkBox{
+  width:24px;
+  height:24px;
+  flex-shrink:0;
+  accent-color:#4e9956;
+}
+
+.completeMessage{
+  display:none;
+  margin-top:16px;
+  padding:20px;
+  background:#fff2a8;
+  border-radius:20px;
+  text-align:center;
+  line-height:1.7;
+  font-weight:bold;
+}
+
+.completeMessage.show{
+  display:block;
+}
+
+
+/* ========================================
+   葉っぱ
+======================================== */
+
+.fallingLeaf{
+  position:fixed;
+  top:-35px;
+  z-index:999;
+  pointer-events:none;
+  font-size:24px;
+
+  animation:
+    leafFall 3.8s linear forwards;
+}
+
+@keyframes leafFall{
+  0%{
+    transform:translateY(0) rotate(0deg);
+    opacity:1;
+  }
+
+  100%{
+    transform:translateY(110vh) rotate(520deg);
+    opacity:0;
+  }
+}
+
+
+/* ========================================
+   スマホ調整
+======================================== */
+
+@media(max-width:600px){
+
+  .logo{
+    font-size:42px;
+  }
+
+  .tree{
+    transform:translateX(-50%) scale(.86);
+    transform-origin:bottom center;
+  }
+
+  .characters{
+    bottom:153px;
+  }
+
+  .character{
+    font-size:36px;
+  }
+
+  .hiddenCharacter{
+    bottom:220px;
+  }
+}
+</style>
+</head>
+
+
+<body>
+
+
+<!-- ======================================
+     起動画面
+====================================== -->
+
+<section id="startScreen" class="screen active">
+
+  <div class="sun"></div>
+
+  <div class="rainbow"></div>
+
+  <div class="cloud cloud1"></div>
+  <div class="cloud cloud2"></div>
+
+
+  <!-- 大きな実のなる木 -->
+
+  <div class="tree">
+
+    <div class="crown"></div>
+
+    <div class="trunk"></div>
+
+    <div class="branch left"></div>
+    <div class="branch right"></div>
+
+    <div class="fruit f1"></div>
+    <div class="fruit f2"></div>
+    <div class="fruit f3"></div>
+    <div class="fruit f4"></div>
+    <div class="fruit f5"></div>
+    <div class="fruit f6"></div>
+    <div class="fruit f7"></div>
+
+  </div>
+
+
+  <!-- ロゴ -->
+
+  <div class="logoArea">
+
+    <h1 class="logo">そなYELL</h1>
+
+    <p class="catch">
+      今日の一歩が、未来の安心につながる。
+    </p>
+
+    <p class="worldMessage">
+      みんなのYELLで森が育つ 🌱
+    </p>
+
+  </div>
+
+
+  <!-- 森の仲間 -->
+
+  <div class="characters">
+
+    <span class="character">👧</span>
+    <span class="character">🐿️</span>
+    <span class="character">🐻</span>
+    <span class="character">🐰</span>
+    <span class="character">🐦</span>
+
+  </div>
+
+
+  <!-- 隠れレアキャラ -->
+
+  <div class="hiddenCharacter">
+    ✨
+  </div>
+
+
+  <!-- スタート -->
+
+  <div class="startArea">
+
+    <div class="startMessage">
+      🌱 我が家の備えを、一つずつ。
+    </div>
+
+    <button
+      class="startButton"
+      onclick="showScreen('homeScreen')"
+    >
+      ゲストではじめる
+    </button>
+
+    <button
+      class="startButton secondary"
+      onclick="showScreen('homeScreen')"
+    >
+      登録してはじめる
+    </button>
+
+  </div>
+
+</section>
+
+
+
+<!-- ======================================
+     ホーム
+====================================== -->
+
+<section id="homeScreen" class="screen">
+
+  <header class="header">
+
+    <div class="headerLogo">
+      🌱 そなYELL
+    </div>
+
+    <div class="yellBadge">
+      YELL 🌟 <span id="yellCountHome">0</span>
+    </div>
+
+  </header>
+
+
+  <main class="pageContent">
+
+    <div class="welcomeCard">
+
+      <h2>
+        今日も一歩、そなえよう！
+      </h2>
+
+      <p>
+        小さな備えが、未来の安心につながるよ。
+      </p>
+
+    </div>
+
+
+    <div class="homeCard">
+
+      <h3>
+        🏠 我が家の備え
+      </h3>
+
+      <p>
+        下のカテゴリーから気になる備えを選んでね。<br>
+        一つずつチェックしながら、我が家の備えを進めていこう！✨
+      </p>
+
+      <button
+        class="mainButton"
+        onclick="showScreen('prepareScreen')"
+      >
+        備えをチェックする
+      </button>
+
+    </div>
+
+
+    <div class="homeCard">
+
+      <h3>
+        📖 防災図鑑
+      </h3>
+
+      <p>
+        防災に役立つ写真や動画、知っておきたい情報を
+        少しずつ見ていこう。
+      </p>
+
+      <button
+        class="mainButton"
+        onclick="comingSoon('防災図鑑')"
+      >
+        防災図鑑を見る
+      </button>
+
+    </div>
+
+
+    <div class="homeCard">
+
+      <h3>
+        🌳 みんなのYELL
+      </h3>
+
+      <p>
+        一人ひとりの小さな備えが、
+        そなYELLの森を育てていくよ。
+      </p>
+
+      <button
+        class="mainButton"
+        onclick="comingSoon('みんなのYELL')"
+      >
+        みんなのYELLを見る
+      </button>
+
+    </div>
+
+  </main>
+
+</section>
+
+
+
+<!-- ======================================
+     我が家の備え
+====================================== -->
+
+<section id="prepareScreen" class="screen">
+
+  <header class="header">
+
+    <div class="headerLogo">
+      🌱 そなYELL
+    </div>
+
+    <div class="yellBadge">
+      YELL 🌟 <span id="yellCountPrepare">0</span>
+    </div>
+
+  </header>
+
+
+  <main class="pageContent">
+
+    <button
+      class="backButton"
+      onclick="showScreen('homeScreen')"
+    >
+      ← ホームへ戻る
+    </button>
+
+
+    <h2 class="pageTitle">
+      🏠 我が家の備え
+    </h2>
+
+    <p class="pageLead">
+      下のカテゴリーから気になる備えを選んでね。<br>
+      一つずつチェックしながら、我が家の備えを進めていこう！✨
+    </p>
+
+
+    <button
+      class="categoryButton"
+      onclick="openCheck('water')"
+    >
+
+      <div class="categoryIcon">
+        💧
+      </div>
+
+      <div>
+
+        <div class="categoryName">
+          水・食料
+        </div>
+
+        <div class="categoryDescription">
+          飲み水・食料の備え
+        </div>
+
+      </div>
+
+    </button>
+
+
+    <button
+      class="categoryButton"
+      onclick="openCheck('toilet')"
+    >
+
+      <div class="categoryIcon">
+        🚽
+      </div>
+
+      <div>
+
+        <div class="categoryName">
+          トイレ
+        </div>
+
+        <div class="categoryDescription">
+          断水時のトイレ対策
+        </div>
+
+      </div>
+
+    </button>
+
+
+    <button
+      class="categoryButton"
+      onclick="openCheck('power')"
+    >
+
+      <div class="categoryIcon">
+        🔦
+      </div>
+
+      <div>
+
+        <div class="categoryName">
+          明かり・電源
+        </div>
+
+        <div class="categoryDescription">
+          停電への備え
+        </div>
+
+      </div>
+
+    </button>
+
+
+    <button
+      class="categoryButton"
+      onclick="openCheck('bag')"
+    >
+
+      <div class="categoryIcon">
+        🎒
+      </div>
+
+      <div>
+
+        <div class="categoryName">
+          避難・持ち出し
+        </div>
+
+        <div class="categoryDescription">
+          避難するときの準備
+        </div>
+
+      </div>
+
+    </button>
+
+
+    <button
+      class="categoryButton"
+      onclick="openCheck('family')"
+    >
+
+      <div class="categoryIcon">
+        👨‍👩‍👧
+      </div>
+
+      <div>
+
+        <div class="categoryName">
+          家族・連絡
+        </div>
+
+        <div class="categoryDescription">
+          家族で決めておくこと
+        </div>
+
+      </div>
+
+    </button>
+
+  </main>
+
+</section>
+
+
+
+<!-- ======================================
+     チェック画面
+====================================== -->
+
+<section id="checkScreen" class="screen">
+
+  <header class="header">
+
+    <div class="headerLogo">
+      🌱 そなYELL
+    </div>
+
+    <div class="yellBadge">
+      YELL 🌟 <span id="yellCountCheck">0</span>
+    </div>
+
+  </header>
+
+
+  <main class="pageContent">
+
+    <button
+      class="backButton"
+      onclick="showScreen('prepareScreen')"
+    >
+      ← カテゴリーへ戻る
+    </button>
+
+
+    <h2
+      class="pageTitle"
+      id="checkTitle"
+    >
+      備えをチェックしよう
+    </h2>
+
+
+    <p class="pageLead">
+      できているものにチェックを入れてね。<br>
+      全部できたら、今日のYELLが増えるよ🌱
+    </p>
+
+
+    <div id="checkList"></div>
+
+
+    <div
+      id="completeMessage"
+      class="completeMessage"
+    >
+      🎉 すごい！<br>
+      今日の備えが一歩進んだよ！<br><br>
+      🌱 YELL +1
+    </div>
+
+  </main>
+
+</section>
+
+
+
+<script>
+
+/* ========================================
+   画面切り替え
+======================================== */
+
+function showScreen(screenId){
+
+  const screens =
+    document.querySelectorAll(".screen");
+
+  screens.forEach(function(screen){
+
+    screen.classList.remove("active");
+
+  });
+
+  const target =
+    document.getElementById(screenId);
+
+  if(target){
+
+    target.classList.add("active");
+
+  }
+
+  window.scrollTo(0,0);
+
+}
+
+
+/* ========================================
+   YELL
+======================================== */
+
+let yellCount = 0;
+
+
+function updateYell(){
+
+  document.getElementById("yellCountHome").textContent =
+    yellCount;
+
+  document.getElementById("yellCountPrepare").textContent =
+    yellCount;
+
+  document.getElementById("yellCountCheck").textContent =
+    yellCount;
+
+}
+
+
+/* ========================================
+   備えデータ
+======================================== */
+
+const preparedness = {
+
+  water:{
+    title:"💧 水・食料の備え",
+
+    items:[
+      "飲み水を家族分備えている",
+      "すぐ食べられる食品を備えている",
+      "最低3日分を目安に備えている"
+    ]
+  },
+
+
+  toilet:{
+    title:"🚽 トイレの備え",
+
+    items:[
+      "携帯トイレ・簡易トイレを備えている",
+      "使う場所を家族で決めている",
+      "使い方を確認している"
+    ]
+  },
+
+
+  power:{
+    title:"🔦 明かり・電源の備え",
+
+    items:[
+      "懐中電灯を準備している",
+      "電池の予備を用意している",
+      "スマホの充電方法を準備している"
+    ]
+  },
+
+
+  bag:{
+    title:"🎒 避難・持ち出しの備え",
+
+    items:[
+      "非常用持ち出し袋を準備している",
+      "取り出しやすい場所に置いている",
+      "家族それぞれの必要品を確認している"
+    ]
+  },
+
+
+  family:{
+    title:"👨‍👩‍👧 家族・連絡の備え",
+
+    items:[
+      "家族の集合場所を決めている",
+      "連絡方法を決めている",
+      "災害時の役割を話し合っている"
+    ]
+  }
+
+};
+
+
+/* ========================================
+   チェック画面を開く
+======================================== */
+
+function openCheck(type){
+
+  const data =
+    preparedness[type];
+
+  if(!data){
+    return;
+  }
+
+
+  document.getElementById("checkTitle").textContent =
+    data.title;
+
+
+  const list =
+    document.getElementById("checkList");
+
+  list.innerHTML = "";
+
+
+  data.items.forEach(function(item,index){
+
+    const card =
+      document.createElement("div");
+
+    card.className =
+      "checkCard";
+
+
+    card.innerHTML = `
+
+      <label class="checkLabel">
+
+        <input
+          class="checkBox"
+          type="checkbox"
+          data-index="${index}"
+          onchange="checkProgress()"
+        >
+
+        <span>
+          ${item}
+        </span>
+
+      </label>
+
+    `;
+
+
+    list.appendChild(card);
+
+  });
+
+
+  document
+    .getElementById("completeMessage")
+    .classList.remove("show");
+
+
+  showScreen("checkScreen");
+
+}
+
+
+/* ========================================
+   チェック完了
+======================================== */
+
+function checkProgress(){
+
+  const boxes =
+    document.querySelectorAll(
+      "#checkList .checkBox"
+    );
+
+
+  const checked =
+    document.querySelectorAll(
+      "#checkList .checkBox:checked"
+    );
+
+
+  if(
+    boxes.length > 0 &&
+    checked.length === boxes.length
+  ){
+
+    document
+      .getElementById("completeMessage")
+      .classList.add("show");
+
+
+    yellCount += 1;
+
+    updateYell();
+
+    leafAnimation();
+
+  }
+
+}
+
+
+/* ========================================
+   葉っぱ
+======================================== */
+
+function leafAnimation(){
+
+  for(let i=0;i<15;i++){
+
+    const leaf =
+      document.createElement("div");
+
+    leaf.className =
+      "fallingLeaf";
+
+    leaf.textContent =
+      "🍃";
+
+
+    leaf.style.left =
+      Math.random()*100 + "%";
+
+
+    leaf.style.animationDelay =
+      Math.random()*1.3 + "s";
+
+
+    leaf.style.fontSize =
+      (18 + Math.random()*12) + "px";
+
+
+    document.body.appendChild(leaf);
+
+
+    setTimeout(function(){
+
+      leaf.remove();
+
+    },4500);
+
+  }
+
+}
+
+
+/* ========================================
+   まだ作っていない機能
+======================================== */
+
+function comingSoon(name){
+
+  alert(
+    name +
+    "は、これからそなYELLに育てていく機能です🌱"
+  );
+
+}
+
+
+/* ========================================
+   初期化
+======================================== */
+
+updateYell();
+
+</script>
+
+</body>
+</html>
