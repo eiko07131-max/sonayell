@@ -11,7 +11,10 @@
 <iframe id="outerApp" src="./app.html" title="そなYELL"></iframe>
 <script>
 const outer=document.getElementById('outerApp');
+const shouldEnterHome=sessionStorage.getItem('sonayell_enter_home_once')==='1';
+if(shouldEnterHome)sessionStorage.removeItem('sonayell_enter_home_once');
 function enterHome(){
+  if(!shouldEnterHome)return false;
   try{
     const outerDoc=outer.contentDocument;
     if(!outerDoc)return false;
@@ -37,8 +40,10 @@ function enterHome(){
     return go();
   }catch(e){return false;}
 }
-outer.addEventListener('load',()=>{setTimeout(enterHome,100);setTimeout(enterHome,500);setTimeout(enterHome,1200);});
-setTimeout(enterHome,900);
+if(shouldEnterHome){
+  outer.addEventListener('load',()=>{setTimeout(enterHome,100);setTimeout(enterHome,500);setTimeout(enterHome,1200);});
+  setTimeout(enterHome,900);
+}
 </script>
 </body>
 </html>
