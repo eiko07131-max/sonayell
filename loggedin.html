@@ -13,6 +13,23 @@
 const outer=document.getElementById('outerApp');
 const shouldEnterHome=sessionStorage.getItem('sonayell_enter_home_once')==='1';
 if(shouldEnterHome)sessionStorage.removeItem('sonayell_enter_home_once');
+
+function getInnerFrame(){
+  try{
+    const outerDoc=outer.contentDocument;
+    return outerDoc ? outerDoc.getElementById('appFrame') : null;
+  }catch(e){return null;}
+}
+
+function syncInnerYell(){
+  try{
+    const inner=getInnerFrame();
+    if(!inner||!inner.contentWindow)return false;
+    inner.contentWindow.eval('state=load();update();');
+    return true;
+  }catch(e){return false;}
+}
+
 function enterHome(){
   if(!shouldEnterHome)return false;
   try{
@@ -25,13 +42,14 @@ function enterHome(){
         const w=inner.contentWindow;
         if(w&&typeof w.showScreen==='function'){
           w.showScreen('homeScreen');
+          syncInnerYell();
           return true;
         }
         const d=inner.contentDocument;
         if(d){
           d.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));
           const home=d.getElementById('homeScreen');
-          if(home){home.classList.add('active');return true;}
+          if(home){home.classList.add('active');syncInnerYell();return true;}
         }
       }catch(e){}
       return false;
@@ -40,10 +58,27 @@ function enterHome(){
     return go();
   }catch(e){return false;}
 }
-if(shouldEnterHome){
-  outer.addEventListener('load',()=>{setTimeout(enterHome,100);setTimeout(enterHome,500);setTimeout(enterHome,1200);});
-  setTimeout(enterHome,900);
-}
+
+// app.html が最新のYELLを localStorage に保存したら、
+// 内側のアプリもその値を読み直して木・バッジ・進捗を同じ数字にそろえる。
+window.addEventListener('storage',e=>{
+  if(e.key==='sonayell_v2'){
+    setTimeout(syncInnerYell,0);
+    setTimeout(syncInnerYell,120);
+  }
+});
+
+outer.addEventListener('load',()=>{
+  setTimeout(syncInnerYell,250);
+  setTimeout(syncInnerYell,900);
+  if(shouldEnterHome){
+    setTimeout(enterHome,100);
+    setTimeout(enterHome,500);
+    setTimeout(enterHome,1200);
+  }
+});
+
+if(shouldEnterHome)setTimeout(enterHome,900);
 </script>
 </body>
 </html>
