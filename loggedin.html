@@ -48,21 +48,26 @@ function syncInnerYell(){
 
     const leaves=d.getElementById('treeLeaves');
     if(leaves){
-      leaves.innerHTML='';
-      for(let i=0;i<max;i++){
-        const s=d.createElement('span');
-        s.className='treeLeaf'+(i<y?' on':'');
-        s.textContent='🍃';
-        leaves.appendChild(s);
+      const currentOn=leaves.querySelectorAll('.treeLeaf.on').length;
+      const currentTotal=leaves.querySelectorAll('.treeLeaf').length;
+      if(currentOn!==Math.min(y,max)||currentTotal!==max){
+        leaves.innerHTML='';
+        for(let i=0;i<max;i++){
+          const s=d.createElement('span');
+          s.className='treeLeaf'+(i<y?' on':'');
+          s.textContent='🍃';
+          leaves.appendChild(s);
+        }
       }
     }
 
     const remain=d.getElementById('treeRemain');
     if(remain){
       const n=Math.max(max-y,0);
-      remain.innerHTML=n===0
+      const expected=n===0
         ? '🎉 大樹になったよ！<br><small>ここからさらに育てていこう。</small>'
         : '大樹まであと <strong>'+n+'</strong> YELL！<br><small>一歩ずつ、木を育てよう。</small>';
+      if(remain.innerHTML!==expected)remain.innerHTML=expected;
     }
     return true;
   }catch(e){return false;}
@@ -115,12 +120,9 @@ outer.addEventListener('load',()=>{
   }
 });
 
-setInterval(()=>{
-  const inner=getInnerFrame();
-  if(!inner||!inner.contentDocument)return;
-  const shown=inner.contentDocument.querySelector('.yellCount');
-  if(shown && Number(shown.textContent)!==latestYell()) syncInnerYell();
-},400);
+// 投稿画面だけ更新されて木が古いまま残るのを防ぐため、
+// 判定せずに定期的に全YELL表示と木の進捗を最新値へ同期する。
+setInterval(syncInnerYell,250);
 
 if(shouldEnterHome)setTimeout(enterHome,900);
 </script>
