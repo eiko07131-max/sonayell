@@ -1,7 +1,5 @@
-const CACHE_NAME = 'sonayell-v1';
+const CACHE_NAME = 'sonayell-v2';
 const APP_SHELL = [
-  './',
-  './index.html',
   './manifest.json',
   './app-icon.svg'
 ];
@@ -25,15 +23,30 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
 
-  event.respondWith(
-    caches.match(event.request).then(cached => {
-      if (cached) return cached;
+  const request = event.request;
+  const isPage = request.mode === 'navigate' || request.destination === 'document';
 
-      return fetch(event.request).then(response => {
+  if (isPage) {
+    event.respondWith(
+      fetch(request)
+        .then(response => {
+          const copy = response.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(request, copy));
+          return response;
+        })
+        .catch(() => caches.match(request).then(cached => cached || caches.match('./index.html')))
+    );
+    return;
+  }
+
+  event.respondWith(
+    caches.match(request).then(cached => {
+      if (cached) return cached;
+      return fetch(request).then(response => {
         const copy = response.clone();
-        caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy));
+        caches.open(CACHE_NAME).then(cache => cache.put(request, copy));
         return response;
-      }).catch(() => caches.match('./index.html'));
+      });
     })
   );
 });
