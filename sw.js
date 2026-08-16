@@ -1,52 +1,44 @@
-const CACHE_NAME = 'sonayell-v2';
+const CACHE_NAME = 'sonayell-v3';
 const APP_SHELL = [
   './manifest.json',
   './app-icon.svg'
 ];
 
 self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(APP_SHELL))
-  );
+  event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(APP_SHELL)));
   self.skipWaiting();
 });
 
 self.addEventListener('activate', event => {
-  event.waitUntil(
-    caches.keys().then(keys => Promise.all(
-      keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))
-    ))
-  );
+  event.waitUntil(caches.keys().then(keys => Promise.all(
+    keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))
+  )));
   self.clients.claim();
 });
 
 self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
-
   const request = event.request;
+  const url = new URL(request.url);
   const isPage = request.mode === 'navigate' || request.destination === 'document';
+  const isChangingAppFile = url.origin === self.location.origin && (
+    url.pathname.endsWith('.js') || url.pathname.endsWith('.html')
+  );
 
-  if (isPage) {
+  if (isPage || isChangingAppFile) {
     event.respondWith(
-      fetch(request)
-        .then(response => {
-          const copy = response.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(request, copy));
-          return response;
-        })
-        .catch(() => caches.match(request).then(cached => cached || caches.match('./index.html')))
+      fetch(request).then(response => {
+        const copy = response.clone();
+        caches.open(CACHE_NAME).then(cache => cache.put(request, copy));
+        return response;
+      }).catch(() => caches.match(request).then(cached => cached || (isPage ? caches.match('./index.html') : undefined)))
     );
     return;
   }
 
-  event.respondWith(
-    caches.match(request).then(cached => {
-      if (cached) return cached;
-      return fetch(request).then(response => {
-        const copy = response.clone();
-        caches.open(CACHE_NAME).then(cache => cache.put(request, copy));
-        return response;
-      });
-    })
-  );
+  event.respondWith(caches.match(request).then(cached => cached || fetch(request).then(response => {
+    const copy = response.clone();
+    caches.open(CACHE_NAME).then(cache => cache.put(request, copy));
+    return response;
+  })));
 });
