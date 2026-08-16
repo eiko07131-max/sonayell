@@ -1,8 +1,5 @@
-const CACHE_NAME = 'sonayell-v3';
-const APP_SHELL = [
-  './manifest.json',
-  './app-icon.svg'
-];
+const CACHE_NAME = 'sonayell-v4';
+const APP_SHELL = ['./manifest.json','./app-icon.svg'];
 
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(APP_SHELL)));
@@ -20,25 +17,23 @@ self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
   const request = event.request;
   const url = new URL(request.url);
-  const isPage = request.mode === 'navigate' || request.destination === 'document';
-  const isChangingAppFile = url.origin === self.location.origin && (
-    url.pathname.endsWith('.js') || url.pathname.endsWith('.html')
+  const isAppCode = url.origin === self.location.origin && (
+    request.mode === 'navigate' ||
+    request.destination === 'document' ||
+    url.pathname.endsWith('.html') ||
+    url.pathname.endsWith('.js')
   );
 
-  if (isPage || isChangingAppFile) {
-    event.respondWith(
-      fetch(request).then(response => {
-        const copy = response.clone();
-        caches.open(CACHE_NAME).then(cache => cache.put(request, copy));
-        return response;
-      }).catch(() => caches.match(request).then(cached => cached || (isPage ? caches.match('./index.html') : undefined)))
-    );
+  if (isAppCode) {
+    event.respondWith(fetch(request, {cache:'no-store'}));
     return;
   }
 
-  event.respondWith(caches.match(request).then(cached => cached || fetch(request).then(response => {
-    const copy = response.clone();
-    caches.open(CACHE_NAME).then(cache => cache.put(request, copy));
-    return response;
-  })));
+  event.respondWith(
+    caches.match(request).then(cached => cached || fetch(request).then(response => {
+      const copy = response.clone();
+      caches.open(CACHE_NAME).then(cache => cache.put(request, copy));
+      return response;
+    }))
+  );
 });
