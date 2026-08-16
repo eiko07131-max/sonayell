@@ -26,7 +26,7 @@ body{margin:0;font-family:"Yu Gothic",Meiryo,sans-serif;background:#f5faef;color
 const U='https://illnptsvaieyacjajlfm.supabase.co';
 const K='sb_publishable_QfSUIWFyzrr0v9t941s8dg_-GPvjwzx';
 const REGISTER_URL='https://eiko07131-max.github.io/sonayell/register.html';
-const APP_URL='./enter.html?v=5';
+const APP_URL='./enter.html?after_login=1&v=6';
 let mode='signup';
 const $=id=>document.getElementById(id);
 function showMsg(text,type='ok'){const m=$('msg');m.className='msg '+type;m.textContent=text;}
@@ -39,7 +39,6 @@ async function claimAndEnter(accessToken,refreshToken=''){
   localStorage.setItem('sonayell_access_token',accessToken);
   if(refreshToken)localStorage.setItem('sonayell_refresh_token',refreshToken);
   localStorage.setItem('sonayell_registered','1');
-  sessionStorage.setItem('sonayell_enter_home_once','1');
   const gt=localStorage.getItem('sonayell_guest_token');let s={};try{s=JSON.parse(localStorage.getItem('sonayell_v2')||'{}')}catch(e){}
   try{await fetch(U+'/rest/v1/rpc/sona_claim_guest_data',{method:'POST',headers:{apikey:K,Authorization:'Bearer '+accessToken,'Content-Type':'application/json'},body:JSON.stringify({p_guest_token:gt||null,p_guest_yell:s.yell||0})});}catch(e){}
   showMsg('✅ ログイン完了！そなYELLへ入ります。','ok');
