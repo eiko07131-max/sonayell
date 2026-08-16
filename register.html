@@ -42,6 +42,7 @@ async function claimAndEnter(accessToken,refreshToken=''){
   const gt=localStorage.getItem('sonayell_guest_token');let s={};try{s=JSON.parse(localStorage.getItem('sonayell_v2')||'{}')}catch(e){}
   try{await fetch(U+'/rest/v1/rpc/sona_claim_guest_data',{method:'POST',headers:{apikey:K,Authorization:'Bearer '+accessToken,'Content-Type':'application/json'},body:JSON.stringify({p_guest_token:gt||null,p_guest_yell:s.yell||0})});}catch(e){}
   showMsg('✅ ログイン完了！そなYELLへ入ります。','ok');
+  sessionStorage.setItem('sonayell_enter_home_once','1');
   location.replace(APP_URL);
 }
 async function handleReturnFromEmail(){
