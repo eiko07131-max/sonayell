@@ -8,106 +8,17 @@
 <style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#f5faef}iframe{display:block;width:100%;height:100%;border:0}</style>
 </head>
 <body>
-<iframe id="outerApp" src="./app.html?from=login3" title="そなYELL"></iframe>
+<iframe id="outerApp" src="./app.html?from=prepare3" title="そなYELL"></iframe>
 <script>
 const outer=document.getElementById('outerApp');
-
-function getInner(){
-  try{
-    const outerDoc=outer.contentDocument;
-    return outerDoc ? outerDoc.getElementById('appFrame') : null;
-  }catch(e){return null;}
-}
-
-function latestYell(){
-  try{
-    const s=JSON.parse(localStorage.getItem('sonayell_v2')||'{}');
-    return Math.max(0,Number(s.yell)||0);
-  }catch(e){return 0;}
-}
-
-function syncYellNow(){
-  try{
-    const inner=getInner();
-    if(!inner||!inner.contentDocument)return false;
-    const d=inner.contentDocument;
-    const y=latestYell();
-    const max=50;
-
-    d.querySelectorAll('.yellCount').forEach(x=>x.textContent=y);
-    const fy=d.getElementById('forestYell');
-    if(fy)fy.textContent=y;
-
-    const emoji=d.getElementById('myTreeEmoji');
-    if(emoji)emoji.textContent=y>=50?'🌳':y>=25?'🌿':'🌱';
-
-    const progress=d.getElementById('treeProgressText');
-    if(progress)progress.textContent=Math.min(y,max)+' / '+max;
-
-    const leaves=d.getElementById('treeLeaves');
-    if(leaves){
-      leaves.innerHTML='';
-      for(let i=0;i<max;i++){
-        const s=d.createElement('span');
-        s.className='treeLeaf'+(i<y?' on':'');
-        s.textContent='🍃';
-        leaves.appendChild(s);
-      }
-    }
-
-    const remain=d.getElementById('treeRemain');
-    if(remain){
-      const n=Math.max(max-y,0);
-      remain.innerHTML=n===0
-        ? '🎉 大樹になったよ！<br><small>ここからさらに育てていこう。</small>'
-        : '大樹まであと <strong>'+n+'</strong> YELL！<br><small>一歩ずつ、木を育てよう。</small>';
-    }
-    return true;
-  }catch(e){return false;}
-}
-
-function enterHome(){
-  try{
-    const outerDoc=outer.contentDocument;
-    if(!outerDoc)return false;
-    const inner=outerDoc.getElementById('appFrame');
-    if(!inner)return false;
-    const go=()=>{
-      try{
-        const w=inner.contentWindow;
-        if(w&&typeof w.showScreen==='function'){
-          w.showScreen('homeScreen');
-          syncYellNow();
-          return true;
-        }
-        const d=inner.contentDocument;
-        if(d){
-          d.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));
-          const home=d.getElementById('homeScreen');
-          if(home){home.classList.add('active');syncYellNow();return true;}
-        }
-      }catch(e){}
-      return false;
-    };
-    inner.addEventListener('load',()=>{setTimeout(go,50);setTimeout(go,250);setTimeout(go,700);},{once:true});
-    return go();
-  }catch(e){return false;}
-}
-
-outer.addEventListener('load',()=>{
-  setTimeout(enterHome,80);
-  setTimeout(enterHome,300);
-  setTimeout(enterHome,800);
-  setTimeout(enterHome,1500);
-  setTimeout(syncYellNow,300);
-  setTimeout(syncYellNow,1000);
-});
-
-window.addEventListener('storage',e=>{
-  if(e.key==='sonayell_v2')syncYellNow();
-});
-
-setInterval(syncYellNow,200);
+function getInner(){try{const outerDoc=outer.contentDocument;return outerDoc?outerDoc.getElementById('appFrame'):null;}catch(e){return null;}}
+function installPrepareV2(){try{const inner=getInner();if(!inner||!inner.contentDocument)return false;const d=inner.contentDocument;if(d.getElementById('prepareV2Logic'))return true;const loadLogic=()=>{if(d.getElementById('prepareV2Logic'))return;const s=d.createElement('script');s.id='prepareV2Logic';s.src='./prepare-v2.js?v=3';d.body.appendChild(s);};if(d.getElementById('prepareV2Data')){loadLogic();return true;}const s=d.createElement('script');s.id='prepareV2Data';s.src='./prepare-v2-data.js?v=3';s.onload=loadLogic;d.body.appendChild(s);return true;}catch(e){return false;}}
+function latestYell(){try{const s=JSON.parse(localStorage.getItem('sonayell_v2')||'{}');return Math.max(0,Number(s.yell)||0);}catch(e){return 0;}}
+function syncYellNow(){try{const inner=getInner();if(!inner||!inner.contentDocument)return false;const d=inner.contentDocument,y=latestYell(),max=50;d.querySelectorAll('.yellCount').forEach(x=>x.textContent=y);const fy=d.getElementById('forestYell');if(fy)fy.textContent=y;const emoji=d.getElementById('myTreeEmoji');if(emoji)emoji.textContent=y>=50?'🌳':y>=25?'🌿':'🌱';const progress=d.getElementById('treeProgressText');if(progress)progress.textContent=Math.min(y,max)+' / '+max;const leaves=d.getElementById('treeLeaves');if(leaves){const currentOn=leaves.querySelectorAll('.treeLeaf.on').length,currentTotal=leaves.querySelectorAll('.treeLeaf').length;if(currentOn!==Math.min(y,max)||currentTotal!==max){leaves.innerHTML='';for(let i=0;i<max;i++){const s=d.createElement('span');s.className='treeLeaf'+(i<y?' on':'');s.textContent='🍃';leaves.appendChild(s);}}}const remain=d.getElementById('treeRemain');if(remain){const n=Math.max(max-y,0);remain.innerHTML=n===0?'🎉 大樹になったよ！<br><small>ここからさらに育てていこう。</small>':'大樹まであと <strong>'+n+'</strong> YELL！<br><small>一歩ずつ、木を育てよう。</small>';}return true;}catch(e){return false;}}
+function enterHome(){try{const inner=getInner();if(!inner)return false;const go=()=>{try{const w=inner.contentWindow;if(w&&typeof w.showScreen==='function'){w.showScreen('homeScreen');installPrepareV2();syncYellNow();return true;}const d=inner.contentDocument;if(d){d.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));const home=d.getElementById('homeScreen');if(home){home.classList.add('active');installPrepareV2();syncYellNow();return true;}}}catch(e){}return false;};inner.addEventListener('load',()=>{setTimeout(go,50);setTimeout(go,250);setTimeout(go,700);},{once:true});return go();}catch(e){return false;}}
+outer.addEventListener('load',()=>{const inner=getInner();if(inner)inner.addEventListener('load',()=>{setTimeout(installPrepareV2,40);setTimeout(enterHome,80);},{once:true});setTimeout(installPrepareV2,180);setTimeout(installPrepareV2,650);setTimeout(enterHome,80);setTimeout(enterHome,300);setTimeout(enterHome,800);setTimeout(enterHome,1500);setTimeout(syncYellNow,300);setTimeout(syncYellNow,1000);});
+window.addEventListener('storage',e=>{if(e.key==='sonayell_v2')syncYellNow();});
+setInterval(syncYellNow,250);
 setTimeout(enterHome,500);
 </script>
 </body>
