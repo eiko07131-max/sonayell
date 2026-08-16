@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#4e9956">
+<title>そなYELL</title>
+<style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#f5faef}iframe{display:block;width:100%;height:100%;border:0}</style>
+</head>
+<body>
+<iframe id="outerApp" src="./app.html?from=login2" title="そなYELL"></iframe>
+<script>
+const outer=document.getElementById('outerApp');
+function enterHome(){
+  try{
+    const outerDoc=outer.contentDocument;
+    if(!outerDoc)return false;
+    const inner=outerDoc.getElementById('appFrame');
+    if(!inner)return false;
+    const go=()=>{
+      try{
+        const w=inner.contentWindow;
+        if(w&&typeof w.showScreen==='function'){
+          w.showScreen('homeScreen');
+          return true;
+        }
+        const d=inner.contentDocument;
+        if(d){
+          d.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));
+          const home=d.getElementById('homeScreen');
+          if(home){home.classList.add('active');return true;}
+        }
+      }catch(e){}
+      return false;
+    };
+    inner.addEventListener('load',()=>{setTimeout(go,50);setTimeout(go,250);setTimeout(go,700);},{once:true});
+    return go();
+  }catch(e){return false;}
+}
+outer.addEventListener('load',()=>{setTimeout(enterHome,80);setTimeout(enterHome,300);setTimeout(enterHome,800);setTimeout(enterHome,1500);});
+setTimeout(enterHome,500);
+</script>
+</body>
+</html>
