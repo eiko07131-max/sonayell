@@ -1,0 +1,31 @@
+name: Wire PWA foundation
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/pwa-wire.yml'
+      - 'tools/wire_pwa.py'
+
+permissions:
+  contents: write
+
+jobs:
+  wire:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Apply PWA wiring and fixed tree rule
+        run: python tools/wire_pwa.py
+
+      - name: Commit generated wiring
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html manifest.json
+          git diff --cached --quiet && exit 0
+          git commit -m "PWA化の基盤をindexへ接続"
+          git push
