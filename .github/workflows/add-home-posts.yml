@@ -1,8 +1,9 @@
-name: Add home posts section
+name: Fix home posts section
 
 on:
   push:
-    branches: [main]
+    paths:
+      - '.github/workflows/add-home-posts.yml'
 
 permissions:
   contents: write
@@ -14,55 +15,51 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Ensure home posts are visible on the home screen
+      - name: Fix community posts placement
         run: |
           python - <<'PY'
           from pathlib import Path
           p = Path('index.html')
           s = p.read_text(encoding='utf-8')
 
-          if 'homePostsFixV2' in s:
-              print('homePostsFixV2 already exists; nothing to do.')
+          if 'homePostsFixV3' in s:
+              print('homePostsFixV3 already exists')
               raise SystemExit(0)
 
-          fix = r'''<script id="homePostsFixV2">
+          fix = r'''<script id="homePostsFixV3">
           document.addEventListener('DOMContentLoaded', function(){
             function placePosts(){
               var home = document.getElementById('homeScreen');
+              var tree = document.getElementById('myTreeCard');
+              if(!home || !tree || !tree.parentNode) return;
+              var parent = tree.parentNode;
               var posts = document.getElementById('homePosts');
-              if(!home) return;
               if(!posts){
-                posts = document.createElement('div');
+                posts = document.createElement('section');
                 posts.id = 'homePosts';
-                posts.className = 'homePosts';
-                posts.innerHTML = '<div class="homePostsHead"><h3 class="homePostsTitle">📣 みんなの防災投稿</h3><span class="tag">みんなの工夫</span></div><p class="homePostsLead">あなたの小さな工夫が、誰かの安心につながるかも。</p><div class="homePostList"><article class="homePost"><div class="homePostUser">🌱 そなママ</div><p class="homePostText">100均グッズで非常用トイレセットを作って、玄関に置いています！</p><span class="homePostYell">🌟 YELL 3</span></article><article class="homePost"><div class="homePostUser">🌿 えいこ</div><p class="homePostText">懐中電灯はベッドの近くに。停電してもすぐ手に取れて安心！</p><span class="homePostYell">🌟 YELL 5</span></article><article class="homePost"><div class="homePostUser">💧 そなパパ</div><p class="homePostText">水は一人1日3Lを目安に、ローリングストックしています。</p><span class="homePostYell">🌟 YELL 4</span></article></div>';
+                posts.setAttribute('aria-label','みんなの防災投稿');
+                posts.style.cssText = 'margin-top:15px;background:#fff;border-radius:23px;padding:18px;box-shadow:0 5px 18px rgba(50,90,50,.08);border:2px solid #e1ecd9;';
+                posts.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><h3 style="margin:0;color:#397a44;font-size:18px">📣 みんなの防災投稿</h3><span style="background:#edf7e9;color:#4b7651;padding:5px 9px;border-radius:99px;font-size:11px;font-weight:bold">みんなの工夫</span></div><p style="margin:8px 0 14px;font-size:13px;line-height:1.7;color:#527056">あなたの小さな工夫が、誰かの安心につながるかも。</p><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px"><article style="background:#f8fcf5;border-radius:16px;padding:13px"><strong style="font-size:12px;color:#397a44">🌱 そなママ</strong><p style="font-size:12px;line-height:1.65;color:#527056">100均グッズで非常用トイレセットを作って、玄関に置いています！</p><span style="font-size:11px;font-weight:bold;color:#755c20">🌟 YELL 3</span></article><article style="background:#f8fcf5;border-radius:16px;padding:13px"><strong style="font-size:12px;color:#397a44">🌿 えいこ</strong><p style="font-size:12px;line-height:1.65;color:#527056">懐中電灯はベッドの近くに。停電してもすぐ手に取れて安心！</p><span style="font-size:11px;font-weight:bold;color:#755c20">🌟 YELL 5</span></article><article style="background:#f8fcf5;border-radius:16px;padding:13px"><strong style="font-size:12px;color:#397a44">💧 そなパパ</strong><p style="font-size:12px;line-height:1.65;color:#527056">水は一人1日3Lを目安に、ローリングストックしています。</p><span style="font-size:11px;font-weight:bold;color:#755c20">🌟 YELL 4</span></article></div><button type="button" id="homePostsButton" style="width:100%;margin-top:13px;padding:14px;border:0;border-radius:16px;background:#4e9956;color:white;font-weight:bold;font-size:15px;box-shadow:0 4px 0 #37763f">みんなの投稿を見る</button>';
               }
-              if(posts.parentElement !== home){
-                var tree = home.querySelector('.myTreeCard');
-                if(tree) home.insertBefore(posts, tree);
-                else home.appendChild(posts);
+              if(posts.parentNode !== parent || posts.nextSibling !== tree){
+                parent.insertBefore(posts, tree);
               }
               posts.style.display = 'block';
             }
             placePosts();
-            setTimeout(placePosts, 300);
+            setTimeout(placePosts, 250);
           });
           </script>'''
 
-          if '</body>' in s:
-              s = s.replace('</body>', fix + '</body>', 1)
-          else:
-              s += fix
-
+          s = s.replace('</body>', fix + '</body>', 1)
           p.write_text(s, encoding='utf-8')
-          print('home posts visibility fix added')
           PY
 
-      - name: Commit change
+      - name: Commit fixed index
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add index.html
           git diff --cached --quiet && exit 0
-          git commit -m "Ensure community posts appear on home"
+          git commit -m "Fix community posts placement on home"
           git push
