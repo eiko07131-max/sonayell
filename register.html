@@ -26,14 +26,14 @@ body{margin:0;font-family:"Yu Gothic",Meiryo,sans-serif;background:#f5faef;color
 const U='https://illnptsvaieyacjajlfm.supabase.co';
 const K='sb_publishable_QfSUIWFyzrr0v9t941s8dg_-GPvjwzx';
 const REGISTER_URL='https://eiko07131-max.github.io/sonayell/register.html';
-const APP_URL='./app.html?registered=1';
+const APP_URL='./loggedin.html';
 let mode='signup';
 const $=id=>document.getElementById(id);
 function showMsg(text,type='ok'){const m=$('msg');m.className='msg '+type;m.textContent=text;}
 function setMode(m){mode=m;$('signupTab').classList.toggle('on',m==='signup');$('loginTab').classList.toggle('on',m==='login');$('submit').textContent=m==='signup'?'登録する':'ログインする';$('guide').textContent=m==='signup'?'登録すると確認メールが届きます。メールの「Confirm email address」を押すと、この画面に戻り、そのままそなYELLへ進みます。':'登録済みのメールアドレスとパスワードでログインできます。';$('steps').style.display=m==='signup'?'block':'none';$('msg').className='msg';}
 $('signupTab').addEventListener('click',()=>setMode('signup'));
 $('loginTab').addEventListener('click',()=>setMode('login'));
-$('backApp').addEventListener('click',()=>location.href='./app.html');
+$('backApp').addEventListener('click',()=>location.href=(localStorage.getItem('sonayell_registered')==='1'&&localStorage.getItem('sonayell_access_token'))?APP_URL:'./app.html');
 async function claimAndEnter(accessToken,refreshToken=''){
   if(!accessToken){showMsg('ログイン情報を受け取れませんでした。もう一度ログインしてね。','err');return;}
   localStorage.setItem('sonayell_access_token',accessToken);
@@ -77,6 +77,9 @@ $('submit').addEventListener('click',async()=>{
 });
 const last=localStorage.getItem('sonayell_last_email');if(last)$('email').value=last;
 handleReturnFromEmail();
+if(!location.hash&&localStorage.getItem('sonayell_registered')==='1'&&localStorage.getItem('sonayell_access_token')){
+  location.replace(APP_URL);
+}
 </script>
 </body>
 </html>
