@@ -1,9 +1,18 @@
 (function(){
+  const KEY='sonayell_v2';
+
   function cycle(total){
     total=Math.max(0,Number(total)||0);
     if(total===0)return{total:0,step:0,grown:0};
     const rem=total%50;
     return{total,step:rem===0?50:rem,grown:Math.floor(total/50)};
+  }
+
+  function readTotal(w){
+    try{
+      const saved=JSON.parse(w.localStorage.getItem(KEY)||'{}');
+      return Math.max(0,Number(saved.yell)||0);
+    }catch(e){return 0}
   }
 
   function ensureStyle(d){
@@ -18,9 +27,7 @@
     const d=w.document;
     if(!d)return;
     ensureStyle(d);
-    let total=0;
-    try{ total=Math.max(0,Number(w.state&&w.state.yell)||0); }catch(e){}
-    const c=cycle(total),step=c.step,max=50;
+    const c=cycle(readTotal(w)),step=c.step,max=50;
     const emoji=d.getElementById('myTreeEmoji');
     if(emoji)emoji.textContent=step>=50?'🌳':step>=25?'🌿':'🌱';
     const progress=d.getElementById('treeProgressText');
