@@ -30,4 +30,26 @@ function check(){const boxes=[...document.querySelectorAll('#checkList .checkBox
 function leaf(){for(let i=0;i<15;i++){const x=document.createElement('div');x.className='fallingLeaf';x.textContent='🍃';x.style.left=Math.random()*100+'%';x.style.animationDelay=Math.random()*1.2+'s';document.body.appendChild(x);setTimeout(()=>x.remove(),4500)}}
 function renderForest(){let n=state.yell,icon=n>=20?'🌲':n>=10?'🌳':n>=5?'🌿':'🌱';document.getElementById('forestTree').textContent=icon;const ms=[{n:1,i:'🌱',t:'最初の一歩'},{n:5,i:'🌿',t:'芽が育ったよ'},{n:10,i:'🌳',t:'小さな木になったよ'},{n:20,i:'🌲',t:'大樹になったよ'}],box=document.getElementById('milestones');box.innerHTML='';ms.forEach(m=>{const d=document.createElement('div');d.className='milestone'+(n<m.n?' locked':'');d.innerHTML=`<div class="milestoneIcon">${m.i}</div><div><strong>${m.n} YELL</strong><br><span class="smallNote">${m.t}</span></div>`;box.appendChild(d)})}
 function openRegistration(){document.getElementById('registrationModal').classList.add('show')}function closeRegistration(){document.getElementById('registrationModal').classList.remove('show')}update();renderCategories();renderHome();
+</script><script id="homePostsFixV2">
+document.addEventListener('DOMContentLoaded', function(){
+  function placePosts(){
+    var home = document.getElementById('homeScreen');
+    var posts = document.getElementById('homePosts');
+    if(!home) return;
+    if(!posts){
+      posts = document.createElement('div');
+      posts.id = 'homePosts';
+      posts.className = 'homePosts';
+      posts.innerHTML = '<div class="homePostsHead"><h3 class="homePostsTitle">📣 みんなの防災投稿</h3><span class="tag">みんなの工夫</span></div><p class="homePostsLead">あなたの小さな工夫が、誰かの安心につながるかも。</p><div class="homePostList"><article class="homePost"><div class="homePostUser">🌱 そなママ</div><p class="homePostText">100均グッズで非常用トイレセットを作って、玄関に置いています！</p><span class="homePostYell">🌟 YELL 3</span></article><article class="homePost"><div class="homePostUser">🌿 えいこ</div><p class="homePostText">懐中電灯はベッドの近くに。停電してもすぐ手に取れて安心！</p><span class="homePostYell">🌟 YELL 5</span></article><article class="homePost"><div class="homePostUser">💧 そなパパ</div><p class="homePostText">水は一人1日3Lを目安に、ローリングストックしています。</p><span class="homePostYell">🌟 YELL 4</span></article></div>';
+    }
+    if(posts.parentElement !== home){
+      var tree = home.querySelector('.myTreeCard');
+      if(tree) home.insertBefore(posts, tree);
+      else home.appendChild(posts);
+    }
+    posts.style.display = 'block';
+  }
+  placePosts();
+  setTimeout(placePosts, 300);
+});
 </script></body></html>
