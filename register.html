@@ -33,7 +33,7 @@ function showMsg(text,type='ok'){const m=$('msg');m.className='msg '+type;m.text
 function setMode(m){mode=m;$('signupTab').classList.toggle('on',m==='signup');$('loginTab').classList.toggle('on',m==='login');$('submit').textContent=m==='signup'?'登録する':'ログインする';$('guide').textContent=m==='signup'?'登録すると確認メールが届きます。メールの「Confirm email address」を押すと、この画面に戻り、そのままそなYELLへ進みます。':'登録済みのメールアドレスとパスワードでログインできます。';$('steps').style.display=m==='signup'?'block':'none';$('msg').className='msg';}
 $('signupTab').addEventListener('click',()=>setMode('signup'));
 $('loginTab').addEventListener('click',()=>setMode('login'));
-$('backApp').addEventListener('click',()=>location.href=(localStorage.getItem('sonayell_registered')==='1'&&localStorage.getItem('sonayell_access_token'))?APP_URL:'./app.html');
+$('backApp').addEventListener('click',()=>location.href='./app.html');
 async function claimAndEnter(accessToken,refreshToken=''){
   if(!accessToken){showMsg('ログイン情報を受け取れませんでした。もう一度ログインしてね。','err');return;}
   localStorage.setItem('sonayell_access_token',accessToken);
@@ -78,7 +78,8 @@ $('submit').addEventListener('click',async()=>{
 const last=localStorage.getItem('sonayell_last_email');if(last)$('email').value=last;
 handleReturnFromEmail();
 if(!location.hash&&localStorage.getItem('sonayell_registered')==='1'&&localStorage.getItem('sonayell_access_token')){
-  location.replace(APP_URL);
+  setMode('login');
+  showMsg('✅ この端末ではログイン済みです。必要ならそのままそなYELLへ戻れます。','ok');
 }
 </script>
 </body>
