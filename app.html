@@ -1,25 +1,35 @@
 <!doctype html>
 <html lang="ja">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#4e9956">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="そなYELL">
-  <link rel="manifest" href="./manifest.json">
-  <title>そなYELL</title>
-  <style>
-    html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#f5faef}
-    iframe{display:block;width:100%;height:100%;border:0}
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#4e9956">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="そなYELL">
+<link rel="manifest" href="./manifest.json">
+<title>そなYELL</title>
+<style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#f5faef}iframe{display:block;width:100%;height:100%;border:0}</style>
 </head>
 <body>
-  <iframe src="./index.html" title="そなYELL"></iframe>
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./sw.js', {scope:'./'}).catch(()=>{});
-    }
-  </script>
+<iframe id="appFrame" src="./index.html" title="そなYELL"></iframe>
+<script>
+if('serviceWorker' in navigator){navigator.serviceWorker.register('./sw.js',{scope:'./'}).catch(()=>{});}
+const frame=document.getElementById('appFrame');
+frame.addEventListener('load',()=>{const d=frame.contentDocument;if(!d||d.getElementById('postsScreen'))return;
+const style=d.createElement('style');style.textContent=`#postsScreen{display:none;min-height:100vh;flex-direction:column;background:#f5faef}.postCard{background:#fff;border-radius:20px;padding:16px;margin:9px 0;box-shadow:0 3px 12px rgba(50,90,50,.08)}.postMeta{font-size:11px;color:#78907a}.postBody{font-size:14px;line-height:1.7;margin:8px 0 12px;white-space:pre-wrap}.postActions{display:flex;gap:7px}.postActions button{flex:1;padding:9px;border-radius:12px;background:#edf7e9;color:#4b7651;font-weight:bold;font-size:12px}.postForm{background:linear-gradient(135deg,#dff5d8,#fff4b8);border-radius:22px;padding:16px;margin-bottom:14px}.postForm textarea{width:100%;min-height:100px;border:0;border-radius:14px;padding:12px;box-sizing:border-box;resize:vertical;font:inherit;outline:0}.postForm button{width:100%;margin-top:9px;padding:13px;border-radius:14px;background:#4e9956;color:#fff;font-weight:bold}.postEmpty{background:#fff;border-radius:18px;padding:22px;text-align:center;color:#66806a;line-height:1.8}.postBadge{display:inline-block;background:#fff1a6;color:#755c20;border-radius:99px;padding:5px 9px;font-size:11px;font-weight:bold;margin-bottom:7px}`;d.head.appendChild(style);
+const main=d.querySelector('#homeScreen .pageContent');const tree=d.getElementById('myTreeCard');
+const card=d.createElement('div');card.className='homeCard';card.style.marginTop='15px';card.innerHTML='<h3>📣 みんなの防災投稿</h3><p>あなたの小さな工夫、誰かの役に立つかも。</p><button class="mainButton" id="openPostsBtn">みんなの投稿を見る</button><button class="mainButton" id="newPostBtn" style="margin-top:8px">＋ 投稿してみる</button>';main.insertBefore(card,tree);
+const screen=d.createElement('section');screen.id='postsScreen';screen.className='screen';screen.innerHTML='<header class="header"><div class="headerLogo">📣 みんなの投稿</div><div class="yellBadge">YELL 🌟 <span class="yellCount">0</span></div></header><main class="pageContent"><button class="backButton" id="postsBack">← ホームへ戻る</button><div class="postForm"><span class="postBadge">ゲストでも投稿OK</span><h2 class="pageTitle" style="margin-top:2px">あなたの小さな工夫、誰かの役に立つかも。</h2><textarea id="postText" placeholder="防災でやってみたこと・気づいたことを書いてみよう"></textarea><button id="postSubmit">投稿する</button></div><div id="postList"></div></main>';
+d.body.appendChild(screen);
+const KEY='sonayell_posts_v1';let posts=[];try{posts=JSON.parse(localStorage.getItem(KEY)||'[]')}catch(e){}
+function save(){localStorage.setItem(KEY,JSON.stringify(posts));}
+function render(){const box=d.getElementById('postList');if(!posts.length){box.innerHTML='<div class="postEmpty">🌱 まだ投稿はないよ。<br>あなたの「今日の一歩」を最初の投稿にしてみよう！</div>';return;}box.innerHTML=posts.slice().reverse().map((p,i)=>{const idx=posts.length-1-i;return `<article class="postCard"><div class="postMeta">👤 ${escapeHtml(p.name||'ゲスト')}　${escapeHtml(p.date)}</div><div class="postBody">${escapeHtml(p.text)}</div><div class="postActions"><button data-yell="${idx}">📣 YELLを送る ＋1 <span>${p.yell||0}</span></button><button data-save="${idx">🔖 保存 ${p.saved?'済':''}</button></div></article>`}).join('');box.querySelectorAll('[data-yell]').forEach(b=>b.onclick=()=>{const p=posts[+b.dataset.yell];p.yell=(p.yell||0)+1;save();render();});box.querySelectorAll('[data-save]').forEach(b=>b.onclick=()=>{const p=posts[+b.dataset.save];p.saved=!p.saved;save();render();});}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+function openPosts(){d.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));screen.classList.add('active');d.defaultView.scrollTo(0,0);render();}
+d.getElementById('openPostsBtn').onclick=openPosts;d.getElementById('newPostBtn').onclick=openPosts;d.getElementById('postsBack').onclick=()=>d.defaultView.showScreen('homeScreen');
+d.getElementById('postSubmit').onclick=()=>{const ta=d.getElementById('postText');const text=ta.value.trim();if(!text)return;posts.push({name:'ゲスト',text,date:new Date().toLocaleDateString('ja-JP'),yell:0,saved:false});save();ta.value='';if(d.defaultView.leaf)d.defaultView.leaf();if(d.defaultView.state){d.defaultView.state.yell++;d.defaultView.save();d.defaultView.update();}render();alert('🌱 投稿ありがとう！\n＋1 YELL');};
+});
+</script>
 </body>
 </html>
