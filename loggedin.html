@@ -8,120 +8,43 @@
 <style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#f5faef}iframe{display:block;width:100%;height:100%;border:0}</style>
 </head>
 <body>
-<iframe id="outerApp" src="./app.html?v=logout2" title="そなYELL"></iframe>
+<iframe id="outerApp" src="./app.html?v=prepare3" title="そなYELL"></iframe>
 <script>
 const outer=document.getElementById('outerApp');
 const shouldEnterHome=sessionStorage.getItem('sonayell_enter_home_once')==='1';
 if(shouldEnterHome)sessionStorage.removeItem('sonayell_enter_home_once');
 
 function getInnerFrame(){
-  try{
-    const outerDoc=outer.contentDocument;
-    return outerDoc ? outerDoc.getElementById('appFrame') : null;
-  }catch(e){return null;}
+  try{const outerDoc=outer.contentDocument;return outerDoc?outerDoc.getElementById('appFrame'):null;}catch(e){return null;}
 }
-
-function latestYell(){
+function installPrepareV2(){
   try{
-    const s=JSON.parse(localStorage.getItem('sonayell_v2')||'{}');
-    return Math.max(0,Number(s.yell)||0);
-  }catch(e){return 0;}
+    const inner=getInnerFrame();if(!inner||!inner.contentDocument)return false;
+    const d=inner.contentDocument;if(d.getElementById('prepareV2Logic'))return true;
+    const loadLogic=()=>{if(d.getElementById('prepareV2Logic'))return;const s=d.createElement('script');s.id='prepareV2Logic';s.src='./prepare-v2.js?v=3';d.body.appendChild(s);};
+    if(d.getElementById('prepareV2Data')){loadLogic();return true;}
+    const s=d.createElement('script');s.id='prepareV2Data';s.src='./prepare-v2-data.js?v=3';s.onload=loadLogic;d.body.appendChild(s);return true;
+  }catch(e){return false;}
 }
-
+function latestYell(){try{const s=JSON.parse(localStorage.getItem('sonayell_v2')||'{}');return Math.max(0,Number(s.yell)||0);}catch(e){return 0;}}
 function syncInnerYell(){
   try{
-    const inner=getInnerFrame();
-    if(!inner||!inner.contentDocument)return false;
-    const d=inner.contentDocument;
-    const y=latestYell();
-
-    d.querySelectorAll('.yellCount').forEach(x=>x.textContent=y);
-    const fy=d.getElementById('forestYell');
-    if(fy)fy.textContent=y;
-
-    const max=50;
-    const emoji=d.getElementById('myTreeEmoji');
-    if(emoji)emoji.textContent=y>=50?'🌳':y>=25?'🌿':'🌱';
-
-    const progress=d.getElementById('treeProgressText');
-    if(progress)progress.textContent=Math.min(y,max)+' / '+max;
-
-    const leaves=d.getElementById('treeLeaves');
-    if(leaves){
-      const currentOn=leaves.querySelectorAll('.treeLeaf.on').length;
-      const currentTotal=leaves.querySelectorAll('.treeLeaf').length;
-      if(currentOn!==Math.min(y,max)||currentTotal!==max){
-        leaves.innerHTML='';
-        for(let i=0;i<max;i++){
-          const s=d.createElement('span');
-          s.className='treeLeaf'+(i<y?' on':'');
-          s.textContent='🍃';
-          leaves.appendChild(s);
-        }
-      }
-    }
-
-    const remain=d.getElementById('treeRemain');
-    if(remain){
-      const n=Math.max(max-y,0);
-      const expected=n===0
-        ? '🎉 大樹になったよ！<br><small>ここからさらに育てていこう。</small>'
-        : '大樹まであと <strong>'+n+'</strong> YELL！<br><small>一歩ずつ、木を育てよう。</small>';
-      if(remain.innerHTML!==expected)remain.innerHTML=expected;
-    }
+    const inner=getInnerFrame();if(!inner||!inner.contentDocument)return false;const d=inner.contentDocument,y=latestYell();
+    d.querySelectorAll('.yellCount').forEach(x=>x.textContent=y);const fy=d.getElementById('forestYell');if(fy)fy.textContent=y;
+    const max=50,emoji=d.getElementById('myTreeEmoji');if(emoji)emoji.textContent=y>=50?'🌳':y>=25?'🌿':'🌱';
+    const progress=d.getElementById('treeProgressText');if(progress)progress.textContent=Math.min(y,max)+' / '+max;
+    const leaves=d.getElementById('treeLeaves');if(leaves){const currentOn=leaves.querySelectorAll('.treeLeaf.on').length,currentTotal=leaves.querySelectorAll('.treeLeaf').length;if(currentOn!==Math.min(y,max)||currentTotal!==max){leaves.innerHTML='';for(let i=0;i<max;i++){const s=d.createElement('span');s.className='treeLeaf'+(i<y?' on':'');s.textContent='🍃';leaves.appendChild(s);}}}
+    const remain=d.getElementById('treeRemain');if(remain){const n=Math.max(max-y,0),expected=n===0?'🎉 大樹になったよ！<br><small>ここからさらに育てていこう。</small>':'大樹まであと <strong>'+n+'</strong> YELL！<br><small>一歩ずつ、木を育てよう。</small>';if(remain.innerHTML!==expected)remain.innerHTML=expected;}
     return true;
   }catch(e){return false;}
 }
-
 function enterHome(){
   if(!shouldEnterHome)return false;
-  try{
-    const outerDoc=outer.contentDocument;
-    if(!outerDoc)return false;
-    const inner=outerDoc.getElementById('appFrame');
-    if(!inner)return false;
-    const go=()=>{
-      try{
-        const w=inner.contentWindow;
-        if(w&&typeof w.showScreen==='function'){
-          w.showScreen('homeScreen');
-          syncInnerYell();
-          return true;
-        }
-        const d=inner.contentDocument;
-        if(d){
-          d.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));
-          const home=d.getElementById('homeScreen');
-          if(home){home.classList.add('active');syncInnerYell();return true;}
-        }
-      }catch(e){}
-      return false;
-    };
-    inner.addEventListener('load',()=>{setTimeout(go,80);setTimeout(go,350);},{once:true});
-    return go();
-  }catch(e){return false;}
+  try{const inner=getInnerFrame();if(!inner)return false;const go=()=>{try{const w=inner.contentWindow;if(w&&typeof w.showScreen==='function'){w.showScreen('homeScreen');installPrepareV2();syncInnerYell();return true;}const d=inner.contentDocument;if(d){d.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));const home=d.getElementById('homeScreen');if(home){home.classList.add('active');installPrepareV2();syncInnerYell();return true;}}}catch(e){}return false;};inner.addEventListener('load',()=>{setTimeout(go,80);setTimeout(go,350);},{once:true});return go();}catch(e){return false;}
 }
-
-window.addEventListener('storage',e=>{
-  if(e.key==='sonayell_v2'){
-    setTimeout(syncInnerYell,0);
-    setTimeout(syncInnerYell,80);
-    setTimeout(syncInnerYell,250);
-  }
-});
-
-outer.addEventListener('load',()=>{
-  setTimeout(syncInnerYell,250);
-  setTimeout(syncInnerYell,900);
-  if(shouldEnterHome){
-    setTimeout(enterHome,100);
-    setTimeout(enterHome,500);
-    setTimeout(enterHome,1200);
-  }
-});
-
+window.addEventListener('storage',e=>{if(e.key==='sonayell_v2'){setTimeout(syncInnerYell,0);setTimeout(syncInnerYell,80);setTimeout(syncInnerYell,250);}});
+outer.addEventListener('load',()=>{const inner=getInnerFrame();if(inner)inner.addEventListener('load',()=>{setTimeout(installPrepareV2,40);setTimeout(syncInnerYell,150);},{once:true});setTimeout(installPrepareV2,200);setTimeout(installPrepareV2,700);setTimeout(syncInnerYell,250);setTimeout(syncInnerYell,900);if(shouldEnterHome){setTimeout(enterHome,100);setTimeout(enterHome,500);setTimeout(enterHome,1200);}});
 setInterval(syncInnerYell,250);
-
 if(shouldEnterHome)setTimeout(enterHome,900);
 </script>
 </body>
