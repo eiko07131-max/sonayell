@@ -21,11 +21,49 @@ function getInnerFrame(){
   }catch(e){return null;}
 }
 
+function latestYell(){
+  try{
+    const s=JSON.parse(localStorage.getItem('sonayell_v2')||'{}');
+    return Math.max(0,Number(s.yell)||0);
+  }catch(e){return 0;}
+}
+
 function syncInnerYell(){
   try{
     const inner=getInnerFrame();
-    if(!inner||!inner.contentWindow)return false;
-    inner.contentWindow.eval('state=load();update();');
+    if(!inner||!inner.contentDocument)return false;
+    const d=inner.contentDocument;
+    const y=latestYell();
+
+    d.querySelectorAll('.yellCount').forEach(x=>x.textContent=y);
+    const fy=d.getElementById('forestYell');
+    if(fy)fy.textContent=y;
+
+    const max=50;
+    const emoji=d.getElementById('myTreeEmoji');
+    if(emoji)emoji.textContent=y>=50?'🌳':y>=25?'🌿':'🌱';
+
+    const progress=d.getElementById('treeProgressText');
+    if(progress)progress.textContent=Math.min(y,max)+' / '+max;
+
+    const leaves=d.getElementById('treeLeaves');
+    if(leaves){
+      leaves.innerHTML='';
+      for(let i=0;i<max;i++){
+        const s=d.createElement('span');
+        s.className='treeLeaf'+(i<y?' on':'');
+        s.textContent='🍃';
+        leaves.appendChild(s);
+      }
+    }
+
+    const remain=d.getElementById('treeRemain');
+    if(remain){
+      const n=Math.max(max-y,0);
+      remain.innerHTML=n===0
+        ? '🎉 大樹になったよ！<br><small>ここからさらに育てていこう。</small>'
+        : '大樹まであと <strong>'+n+'</strong> YELL！<br><small>一歩ずつ、木を育てよう。</small>';
+    }
     return true;
   }catch(e){return false;}
 }
@@ -59,12 +97,11 @@ function enterHome(){
   }catch(e){return false;}
 }
 
-// app.html が最新のYELLを localStorage に保存したら、
-// 内側のアプリもその値を読み直して木・バッジ・進捗を同じ数字にそろえる。
 window.addEventListener('storage',e=>{
   if(e.key==='sonayell_v2'){
     setTimeout(syncInnerYell,0);
-    setTimeout(syncInnerYell,120);
+    setTimeout(syncInnerYell,80);
+    setTimeout(syncInnerYell,250);
   }
 });
 
@@ -77,6 +114,13 @@ outer.addEventListener('load',()=>{
     setTimeout(enterHome,1200);
   }
 });
+
+setInterval(()=>{
+  const inner=getInnerFrame();
+  if(!inner||!inner.contentDocument)return;
+  const shown=inner.contentDocument.querySelector('.yellCount');
+  if(shown && Number(shown.textContent)!==latestYell()) syncInnerYell();
+},400);
 
 if(shouldEnterHome)setTimeout(enterHome,900);
 </script>
