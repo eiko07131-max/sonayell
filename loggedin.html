@@ -8,7 +8,7 @@
 <style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#f5faef}iframe{display:block;width:100%;height:100%;border:0}</style>
 </head>
 <body>
-<iframe id="outerApp" src="./app.html" title="そなYELL"></iframe>
+<iframe id="outerApp" src="./app.html?v=logout2" title="そなYELL"></iframe>
 <script>
 const outer=document.getElementById('outerApp');
 const shouldEnterHome=sessionStorage.getItem('sonayell_enter_home_once')==='1';
@@ -120,8 +120,6 @@ outer.addEventListener('load',()=>{
   }
 });
 
-// 投稿画面だけ更新されて木が古いまま残るのを防ぐため、
-// 判定せずに定期的に全YELL表示と木の進捗を最新値へ同期する。
 setInterval(syncInnerYell,250);
 
 if(shouldEnterHome)setTimeout(enterHome,900);
