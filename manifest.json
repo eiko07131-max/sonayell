@@ -1,0 +1,21 @@
+{
+  "name": "そなYELL",
+  "short_name": "そなYELL",
+  "lang": "ja",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#f5faef",
+  "theme_color": "#4e9956",
+  "description": "今日の一歩が、未来の安心につながる。そなYELLは、我が家の備えを一つずつ進める防災アプリです。",
+  "icons": [
+    {
+      "src": "app-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
