@@ -36,55 +36,103 @@ const U='https://illnptsvaieyacjajlfm.supabase.co';
 const K='sb_publishable_QfSUIWFyzrr0v9t941s8dg_-GPvjwzx';
 
 async function receiveGoogleLogin(){
-  const hash=new URLSearchParams(location.hash.replace(/^#/,''));
 
-  const access=hash.get('access_token');
-  const refresh=hash.get('refresh_token')||'';
-  const error=hash.get('error_description')||hash.get('error');
+  const hash=
+    new URLSearchParams(
+      location.hash.replace(/^#/,'')
+    );
+
+  const access=
+    hash.get('access_token');
+
+  const refresh=
+    hash.get('refresh_token')||'';
+
+  const error=
+    hash.get('error_description')||
+    hash.get('error');
 
   if(error){
-    alert('Googleログインでエラーが出ました。もう一度試してね。');
-    history.replaceState(null,'',location.pathname);
+
+    alert(
+      'Googleログインでエラーが出ました。もう一度試してね。'
+    );
+
+    history.replaceState(
+      null,
+      '',
+      location.pathname
+    );
+
     return false;
   }
 
   if(!access)return false;
 
-  localStorage.setItem('sonayell_access_token',access);
+  localStorage.setItem(
+    'sonayell_access_token',
+    access
+  );
 
   if(refresh){
-    localStorage.setItem('sonayell_refresh_token',refresh);
+
+    localStorage.setItem(
+      'sonayell_refresh_token',
+      refresh
+    );
   }
 
-  localStorage.setItem('sonayell_registered','1');
+  localStorage.setItem(
+    'sonayell_registered',
+    '1'
+  );
 
-  const guestToken=localStorage.getItem('sonayell_guest_token');
+  const guestToken=
+    localStorage.getItem(
+      'sonayell_guest_token'
+    );
 
   let state={};
 
   try{
-    state=JSON.parse(localStorage.getItem('sonayell_v2')||'{}');
+
+    state=
+      JSON.parse(
+        localStorage.getItem(
+          'sonayell_v2'
+        )||'{}'
+      );
+
   }catch(e){}
 
   try{
+
     await fetch(
-      U+'/rest/v1/rpc/sona_claim_guest_data',
+      U+
+      '/rest/v1/rpc/sona_claim_guest_data',
       {
         method:'POST',
         headers:{
           apikey:K,
-          Authorization:'Bearer '+access,
-          'Content-Type':'application/json'
+          Authorization:
+            'Bearer '+access,
+          'Content-Type':
+            'application/json'
         },
         body:JSON.stringify({
-          p_guest_token:guestToken||null,
-          p_guest_yell:state.yell||0
+          p_guest_token:
+            guestToken||null,
+          p_guest_yell:
+            state.yell||0
         })
       }
     );
+
   }catch(e){}
 
-  location.replace('./enter.html?after_login=1&v=7');
+  location.replace(
+    './enter.html?after_login=1&v=8'
+  );
 
   return true;
 }
@@ -92,30 +140,43 @@ async function receiveGoogleLogin(){
 receiveGoogleLogin();
 
 
-const outer=document.getElementById('outerApp');
+const outer=
+  document.getElementById(
+    'outerApp'
+  );
 
 const shouldEnterHome=
-  new URLSearchParams(location.search).get('after_login')==='1';
+  new URLSearchParams(
+    location.search
+  ).get('after_login')==='1';
 
 let loginFlagConsumed=false;
 
 
 function consumeLoginFlag(){
 
-  if(!shouldEnterHome || loginFlagConsumed)return;
+  if(
+    !shouldEnterHome ||
+    loginFlagConsumed
+  )return;
 
   loginFlagConsumed=true;
 
   try{
 
-    const u=new URL(location.href);
+    const u=
+      new URL(location.href);
 
-    u.searchParams.delete('after_login');
+    u.searchParams.delete(
+      'after_login'
+    );
 
     history.replaceState(
       null,
       '',
-      u.pathname+u.search+u.hash
+      u.pathname+
+      u.search+
+      u.hash
     );
 
   }catch(e){}
@@ -126,11 +187,14 @@ function getInner(){
 
   try{
 
-    const x=outer.contentDocument;
+    const x=
+      outer.contentDocument;
 
     return x
-      ? x.getElementById('appFrame')
-      : null;
+      ?x.getElementById(
+        'appFrame'
+      )
+      :null;
 
   }catch(e){
 
@@ -143,36 +207,66 @@ function installPrepareV2(){
 
   try{
 
-    const inner=getInner();
+    const inner=
+      getInner();
 
-    if(!inner || !inner.contentDocument)return false;
+    if(
+      !inner ||
+      !inner.contentDocument
+    )return false;
 
-    const d=inner.contentDocument;
+    const d=
+      inner.contentDocument;
 
-    if(d.getElementById('prepareV2Logic'))return true;
+    if(
+      d.getElementById(
+        'prepareV2Logic'
+      )
+    )return true;
 
     const logic=()=>{
 
-      if(d.getElementById('prepareV2Logic'))return;
+      if(
+        d.getElementById(
+          'prepareV2Logic'
+        )
+      )return;
 
-      const s=d.createElement('script');
+      const s=
+        d.createElement(
+          'script'
+        );
 
-      s.id='prepareV2Logic';
-      s.src='./prepare-v2.js?v=4';
+      s.id=
+        'prepareV2Logic';
+
+      s.src=
+        './prepare-v2.js?v=4';
 
       d.body.appendChild(s);
     };
 
-    if(d.getElementById('prepareV2Data')){
+    if(
+      d.getElementById(
+        'prepareV2Data'
+      )
+    ){
 
       logic();
+
       return true;
     }
 
-    const s=d.createElement('script');
+    const s=
+      d.createElement(
+        'script'
+      );
 
-    s.id='prepareV2Data';
-    s.src='./prepare-v2-data.js?v=3';
+    s.id=
+      'prepareV2Data';
+
+    s.src=
+      './prepare-v2-data.js?v=3';
 
     s.onload=logic;
 
@@ -189,12 +283,22 @@ function installPrepareV2(){
 
 function installSearchEmphasis(d){
 
-  if(d.getElementById('actionSearchEmphasis'))return;
+  if(
+    d.getElementById(
+      'actionSearchEmphasis'
+    )
+  )return;
 
-  const p=d.createElement('script');
+  const p=
+    d.createElement(
+      'script'
+    );
 
-  p.id='actionSearchEmphasis';
-  p.src='./action-search-emphasis.js?v=3';
+  p.id=
+    'actionSearchEmphasis';
+
+  p.src=
+    './action-search-emphasis.js?v=3';
 
   d.body.appendChild(p);
 }
@@ -202,12 +306,22 @@ function installSearchEmphasis(d){
 
 function installProfilePatch(d){
 
-  if(d.getElementById('profileSavePatch'))return;
+  if(
+    d.getElementById(
+      'profileSavePatch'
+    )
+  )return;
 
-  const p=d.createElement('script');
+  const p=
+    d.createElement(
+      'script'
+    );
 
-  p.id='profileSavePatch';
-  p.src='./profile-save-patch.js?v=1';
+  p.id=
+    'profileSavePatch';
+
+  p.src=
+    './profile-save-patch.js?v=1';
 
   d.body.appendChild(p);
 }
@@ -215,14 +329,126 @@ function installProfilePatch(d){
 
 function installIncomingYell(d){
 
-  if(d.getElementById('incomingYellSync'))return;
+  if(
+    d.getElementById(
+      'incomingYellSync'
+    )
+  )return;
 
-  const p=d.createElement('script');
+  const p=
+    d.createElement(
+      'script'
+    );
 
-  p.id='incomingYellSync';
-  p.src='./incoming-yell-sync.js?v=1';
+  p.id=
+    'incomingYellSync';
+
+  p.src=
+    './incoming-yell-sync.js?v=1';
 
   d.body.appendChild(p);
+}
+
+
+function installTreeCore(d,w){
+
+  if(
+    w.SonaYellTreeCore &&
+    typeof
+      w.SonaYellTreeCore.install
+      ==='function'
+  ){
+
+    w.SonaYellTreeCore.install(w);
+
+    return true;
+  }
+
+  if(
+    d.getElementById(
+      'sonayellTreeCoreLoader'
+    )
+  )return true;
+
+  const s=
+    d.createElement(
+      'script'
+    );
+
+  s.id=
+    'sonayellTreeCoreLoader';
+
+  s.src=
+    './tree-core.js?v=8';
+
+  s.onload=()=>{
+
+    try{
+
+      if(
+        w.SonaYellTreeCore &&
+        typeof
+          w.SonaYellTreeCore.install
+          ==='function'
+      ){
+
+        w.SonaYellTreeCore.install(w);
+      }
+
+    }catch(e){}
+  };
+
+  d.body.appendChild(s);
+
+  return true;
+}
+
+
+function renderTreeNow(){
+
+  try{
+
+    const inner=
+      getInner();
+
+    if(
+      !inner ||
+      !inner.contentDocument
+    )return false;
+
+    const d=
+      inner.contentDocument;
+
+    const w=
+      inner.contentWindow;
+
+    installTreeCore(d,w);
+
+    if(
+      w.SonaYellTreeCore &&
+      typeof
+        w.SonaYellTreeCore.install
+        ==='function'
+    ){
+
+      w.SonaYellTreeCore.install(w);
+    }
+
+    if(
+      typeof
+        w.renderMyTree
+        ==='function'
+    ){
+
+      w.renderMyTree();
+    }
+
+    return true;
+
+  }catch(e){
+
+    return false;
+  }
 }
 
 
@@ -230,15 +456,25 @@ function installAction(){
 
   try{
 
-    const inner=getInner();
+    const inner=
+      getInner();
 
-    if(!inner || !inner.contentDocument)return false;
+    if(
+      !inner ||
+      !inner.contentDocument
+    )return false;
 
-    const d=inner.contentDocument;
+    const d=
+      inner.contentDocument;
 
-    if(d.getElementById('actionLogic')){
+    if(
+      d.getElementById(
+        'actionLogic'
+      )
+    ){
 
       installSearchEmphasis(d);
+
       return true;
     }
 
@@ -257,43 +493,70 @@ function installAction(){
 
     const next=()=>{
 
-      if(i>=files.length){
+      if(
+        i>=files.length
+      ){
 
-        if(d.getElementById('actionLogic')){
+        if(
+          d.getElementById(
+            'actionLogic'
+          )
+        ){
 
           installSearchEmphasis(d);
+
           return;
         }
 
-        const s=d.createElement('script');
+        const s=
+          d.createElement(
+            'script'
+          );
 
-        s.id='actionLogic';
-        s.src='./disaster-action.js?v=5';
+        s.id=
+          'actionLogic';
 
-        s.onload=()=>installSearchEmphasis(d);
+        s.src=
+          './disaster-action.js?v=5';
+
+        s.onload=
+          ()=>installSearchEmphasis(d);
 
         d.body.appendChild(s);
 
         return;
       }
 
-      const id='actionData'+i;
+      const id=
+        'actionData'+i;
 
-      if(d.getElementById(id)){
+      if(
+        d.getElementById(id)
+      ){
 
         i++;
+
         next();
+
         return;
       }
 
-      const s=d.createElement('script');
+      const s=
+        d.createElement(
+          'script'
+        );
 
       s.id=id;
-      s.src='./'+files[i]+'?v=5';
+
+      s.src=
+        './'+
+        files[i]+
+        '?v=5';
 
       s.onload=()=>{
 
         i++;
+
         next();
       };
 
@@ -301,179 +564,6 @@ function installAction(){
     };
 
     next();
-
-    return true;
-
-  }catch(e){
-
-    return false;
-  }
-}
-
-
-function latestYell(){
-
-  try{
-
-    return Math.max(
-      0,
-      Number(
-        JSON.parse(
-          localStorage.getItem('sonayell_v2')||'{}'
-        ).yell
-      )||0
-    );
-
-  }catch(e){
-
-    return 0;
-  }
-}
-
-
-function treeCycle(total){
-
-  total=Math.max(0,Number(total)||0);
-
-  if(total===0){
-
-    return{
-      step:0,
-      grown:0
-    };
-  }
-
-  const rem=total%50;
-
-  return{
-    step:rem===0?50:rem,
-    grown:Math.floor((total-1)/50)
-  };
-}
-
-
-function syncYellNow(){
-
-  try{
-
-    const inner=getInner();
-
-    if(!inner || !inner.contentDocument)return false;
-
-    const d=inner.contentDocument;
-
-    const y=latestYell();
-
-    const max=50;
-
-    const t=treeCycle(y);
-
-    const step=t.step;
-
-
-    let style=d.getElementById('enterTreeCycleStyle');
-
-    if(!style){
-
-      style=d.createElement('style');
-
-      style.id='enterTreeCycleStyle';
-
-      d.head.appendChild(style);
-    }
-
-    style.textContent=
-      '.yellBadge,.treeYell{display:none!important}';
-
-
-    d.querySelectorAll('.yellBadge,.treeYell')
-      .forEach(
-        x=>x.style.setProperty(
-          'display',
-          'none',
-          'important'
-        )
-      );
-
-
-    const emoji=d.getElementById('myTreeEmoji');
-
-    if(emoji){
-
-      emoji.textContent=
-        step>=50
-          ?'🌳'
-          :step>=25
-            ?'🌿'
-            :'🌱';
-    }
-
-
-    const progress=d.getElementById('treeProgressText');
-
-    if(progress){
-
-      progress.textContent=
-        step+' / '+max;
-    }
-
-
-    const leaves=d.getElementById('treeLeaves');
-
-    if(leaves){
-
-      const on=
-        leaves.querySelectorAll('.treeLeaf.on').length;
-
-      const tot=
-        leaves.querySelectorAll('.treeLeaf').length;
-
-      if(on!==step || tot!==max){
-
-        leaves.innerHTML='';
-
-        for(let i=0;i<max;i++){
-
-          const s=d.createElement('span');
-
-          s.className=
-            'treeLeaf'+(i<step?' on':'');
-
-          s.textContent='🍃';
-
-          leaves.appendChild(s);
-        }
-      }
-    }
-
-
-    const remain=d.getElementById('treeRemain');
-
-    if(remain){
-
-      if(step===50){
-
-        remain.innerHTML=
-          '🎉 大樹になったよ！'+
-          '<br>'+
-          '<small>'+
-          '次の一歩から、新しい木を育てよう。'+
-          '</small>';
-
-      }else{
-
-        remain.innerHTML=
-          (
-            t.grown>0
-              ?'<small>🌳 育てた大樹 '+t.grown+'本</small><br>'
-              :''
-          )+
-          '次の大樹まであと '+
-          '<strong>'+(max-step)+'</strong> YELL！'+
-          '<br>'+
-          '<small>一歩ずつ、木を育てよう。</small>';
-      }
-    }
 
     return true;
 
@@ -492,18 +582,31 @@ function installAll(){
 
   try{
 
-    const inner=getInner();
+    const inner=
+      getInner();
 
-    if(inner && inner.contentDocument){
+    if(
+      inner &&
+      inner.contentDocument
+    ){
 
-      installProfilePatch(inner.contentDocument);
+      installProfilePatch(
+        inner.contentDocument
+      );
 
-      installIncomingYell(inner.contentDocument);
+      installIncomingYell(
+        inner.contentDocument
+      );
+
+      installTreeCore(
+        inner.contentDocument,
+        inner.contentWindow
+      );
     }
 
   }catch(e){}
 
-  syncYellNow();
+  renderTreeNow();
 }
 
 
@@ -511,7 +614,8 @@ function isHomeVisible(){
 
   try{
 
-    const inner=getInner();
+    const inner=
+      getInner();
 
     const d=
       inner &&
@@ -519,11 +623,15 @@ function isHomeVisible(){
 
     const h=
       d &&
-      d.getElementById('homeScreen');
+      d.getElementById(
+        'homeScreen'
+      );
 
     return !!(
       h &&
-      h.classList.contains('active')
+      h.classList.contains(
+        'active'
+      )
     );
 
   }catch(e){
@@ -535,45 +643,70 @@ function isHomeVisible(){
 
 function enterHomeOnce(){
 
-  if(!shouldEnterHome)return false;
+  if(
+    !shouldEnterHome
+  )return false;
 
   try{
 
-    const inner=getInner();
+    const inner=
+      getInner();
 
-    if(!inner)return false;
+    if(
+      !inner
+    )return false;
 
-    const w=inner.contentWindow;
+    const w=
+      inner.contentWindow;
 
-    const d=inner.contentDocument;
+    const d=
+      inner.contentDocument;
 
+    if(
+      w &&
+      typeof
+        w.showScreen
+        ==='function'
+    ){
 
-    if(w && typeof w.showScreen==='function'){
-
-      w.showScreen('homeScreen');
+      w.showScreen(
+        'homeScreen'
+      );
 
       installAll();
+
+      renderTreeNow();
 
       consumeLoginFlag();
 
       return true;
     }
 
-
     if(d){
 
-      d.querySelectorAll('.screen')
-        .forEach(
-          x=>x.classList.remove('active')
-        );
+      d.querySelectorAll(
+        '.screen'
+      ).forEach(
+        x=>
+          x.classList.remove(
+            'active'
+          )
+      );
 
-      const h=d.getElementById('homeScreen');
+      const h=
+        d.getElementById(
+          'homeScreen'
+        );
 
       if(h){
 
-        h.classList.add('active');
+        h.classList.add(
+          'active'
+        );
 
         installAll();
+
+        renderTreeNow();
 
         consumeLoginFlag();
 
@@ -591,7 +724,8 @@ outer.addEventListener(
   'load',
   ()=>{
 
-    const inner=getInner();
+    const inner=
+      getInner();
 
     if(inner){
 
@@ -605,15 +739,18 @@ outer.addEventListener(
           );
 
           setTimeout(
-            ()=>{
-              if(isHomeVisible()){
-                syncYellNow();
-              }
-            },
-            400
+            renderTreeNow,
+            250
           );
 
-          if(shouldEnterHome){
+          setTimeout(
+            renderTreeNow,
+            600
+          );
+
+          if(
+            shouldEnterHome
+          ){
 
             setTimeout(
               enterHomeOnce,
@@ -635,7 +772,6 @@ outer.addEventListener(
       );
     }
 
-
     setTimeout(
       installAll,
       250
@@ -646,8 +782,14 @@ outer.addEventListener(
       800
     );
 
+    setTimeout(
+      renderTreeNow,
+      1200
+    );
 
-    if(shouldEnterHome){
+    if(
+      shouldEnterHome
+    ){
 
       setTimeout(
         enterHomeOnce,
@@ -672,9 +814,12 @@ window.addEventListener(
   'storage',
   e=>{
 
-    if(e.key==='sonayell_v2'){
+    if(
+      e.key===
+      'sonayell_v2'
+    ){
 
-      syncYellNow();
+      renderTreeNow();
     }
   }
 );
@@ -683,12 +828,14 @@ window.addEventListener(
 setInterval(
   ()=>{
 
-    if(isHomeVisible()){
+    if(
+      isHomeVisible()
+    ){
 
-      syncYellNow();
+      renderTreeNow();
     }
   },
-  500
+  800
 );
 </script>
 
