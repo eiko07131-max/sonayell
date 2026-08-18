@@ -15,8 +15,32 @@ async function receiveGoogleLogin(){
   return true;
 }
 
+function goApprovedHome(){
+  location.replace('./enter.html?v=11');
+}
+
+function watchLegacyHomeReturn(){
+  let checks=0;
+  const timer=setInterval(()=>{
+    checks++;
+    try{
+      const appDoc=outer.contentDocument;
+      const inner=appDoc&&appDoc.getElementById('appFrame');
+      const d=inner&&inner.contentDocument;
+      if(d){
+        const home=d.getElementById('homeScreen');
+        if(home&&home.classList.contains('active')){
+          clearInterval(timer);
+          goApprovedHome();
+        }
+      }
+    }catch(e){}
+    if(checks>1200)clearInterval(timer);
+  },200);
+}
+
 function openTarget(target){
-  outer.src='./app.html?v=10';
+  outer.src='./app.html?v=11';
   let tries=0;
   const jump=()=>{
     tries++;
@@ -34,6 +58,7 @@ function openTarget(target){
             screen.classList.add('active');
           }
           if(target==='forestScreen'&&typeof w.renderMyTree==='function')try{w.renderMyTree()}catch(e){}
+          setTimeout(watchLegacyHomeReturn,350);
           return true;
         }
       }
@@ -50,6 +75,6 @@ function openTarget(target){
   const q=new URLSearchParams(location.search);
   const target=q.get('target');
   if(target)openTarget(target);
-  else outer.src='./home.html?v=10';
+  else outer.src='./home.html?v=11';
 })();
 </script></body></html>
