@@ -260,10 +260,12 @@
     const s=createSubScreen('settingsScreen','⚙️ 設定');
     const box=s.querySelector('.mySubBody');
     openScreen(s);
-    const oldCard=document.querySelector('#profileScreen .profileCard');
+    const oldCard=document.querySelector('#profileScreen .profileCard') || document.querySelector('#settingsScreen .profileCard');
     if(oldCard){
-      box.innerHTML='<div class="settingsCard"><h3>プロフィール設定</h3><p>ニックネーム・居住地域・投稿アイコンを変更できます。</p></div>';
-      box.appendChild(oldCard);
+      if(!box.querySelector('.settingsCard')){
+        box.insertAdjacentHTML('afterbegin','<div class="settingsCard"><h3>プロフィール設定</h3><p>ニックネーム・居住地域・投稿アイコンを変更できます。</p></div>');
+      }
+      if(oldCard.parentElement!==box) box.appendChild(oldCard);
       oldCard.style.display='block';
     }else{
       box.innerHTML='<div class="myEmpty">設定を読み込めませんでした。</div>';
