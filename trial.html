@@ -15,21 +15,30 @@ body{display:grid;place-items:center;font-family:"Yu Gothic","Hiragino Kaku Goth
 .hotspot:focus-visible{outline:4px solid rgba(255,255,255,.95);outline-offset:3px}
 #guestBtn{top:79.1%;height:7.9%}
 #registerBtn{top:88.7%;height:7.2%}
-.loadError{display:none;position:absolute;inset:0;z-index:5;background:#fff;color:#8b1e1e;padding:30px;text-align:center;font-weight:800;align-items:center;justify-content:center}
+.loading{position:absolute;inset:0;z-index:4;background:#0b5f31;color:white;display:flex;align-items:center;justify-content:center;font-weight:800;text-align:center;padding:24px}
 @media(max-aspect-ratio:2/3){.poster{width:100vw;height:150vw}}
 @media(min-aspect-ratio:2/3){.poster{height:100vh;width:66.6667vh}}
 </style>
 </head>
 <body>
 <main class="poster" aria-label="そなYELL。今日の一歩が、未来の安心につながる。">
-<img class="posterImg" id="posterImg" src="./assets/start-screen-approved.webp?v=3" alt="そなYELL 立ち上げ画面">
+<img class="posterImg" id="posterImg" alt="そなYELL 立ち上げ画面">
 <button class="hotspot" id="guestBtn" aria-label="ゲストではじめる">ゲストではじめる</button>
 <button class="hotspot" id="registerBtn" aria-label="登録してはじめる">登録してはじめる</button>
-<div class="loadError" id="loadError">合格画像の読み込みに失敗しました。</div>
+<div class="loading" id="loading">そなYELLを準備中…</div>
 </main>
 <script>
-const img=document.getElementById('posterImg');
-img.addEventListener('error',()=>{document.getElementById('loadError').style.display='flex';});
+(async()=>{
+  const loading=document.getElementById('loading');
+  try{
+    const urls=['./assets/start-screen-b64-1.txt?v=1','./assets/start-screen-b64-2.txt?v=1','./assets/start-screen-b64-3.txt?v=1'];
+    const parts=await Promise.all(urls.map(async u=>{const r=await fetch(u,{cache:'no-store'});if(!r.ok)throw new Error(String(r.status));return (await r.text()).trim();}));
+    const img=document.getElementById('posterImg');
+    img.onload=()=>{loading.style.display='none';};
+    img.onerror=()=>{loading.textContent='合格画像の表示に失敗しました。';};
+    img.src='data:image/webp;base64,'+parts.join('');
+  }catch(e){loading.textContent='合格画像の読み込みに失敗しました。';console.error(e);}
+})();
 document.getElementById('guestBtn').addEventListener('click',()=>{
   localStorage.setItem('sonayell_trial_entry','guest');
   location.href='./enter.html?after_login=1&v=8';
