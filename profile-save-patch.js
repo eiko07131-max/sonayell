@@ -64,8 +64,8 @@
     if(!file)return null;
     const isImage=(file.type||'').startsWith('image/'),isVideo=(file.type||'').startsWith('video/');
     if(!isImage&&!isVideo)throw new Error('写真または動画を選んでね。');
-    const max=isVideo?30*1024*1024:8*1024*1024;
-    if(file.size>max)throw new Error(isVideo?'動画は30MB以下にしてね。':'写真は8MB以下にしてね。');
+    const max=isVideo?100*1024*1024:8*1024*1024;
+    if(file.size>max)throw new Error(isVideo?'動画は100MB以下にしてね。':'写真は8MB以下にしてね。');
     const uid=uidFromToken();if(!uid)throw new Error('ユーザー情報を確認できません。');
     let ext=(file.name.split('.').pop()||'').replace(/[^a-zA-Z0-9]/g,'').toLowerCase();if(!ext)ext=isVideo?'mp4':'jpg';
     const path=uid+'/'+Date.now()+'-'+crypto.randomUUID()+'.'+ext;
@@ -85,7 +85,7 @@
     const pick=document.createElement('div');pick.className='postMediaPick';pick.innerHTML='<label>📷 写真・動画を添付（任意）</label><br><input id="postMediaFile" type="file" accept="image/*,video/*"><div id="postMediaPreview" class="postMediaPreview"></div><div id="postMediaNote" class="postMediaNote"></div>';
     btn.insertAdjacentElement('beforebegin',pick);
     const input=pick.querySelector('#postMediaFile'),preview=pick.querySelector('#postMediaPreview'),note=pick.querySelector('#postMediaNote');
-    note.textContent=registered()?'写真8MB・動画30MBまで。':'ゲスト投稿は文章のみ。写真・動画は登録後に使えます。';if(!registered())note.classList.add('mediaGuestNote');
+    note.textContent=registered()?'写真8MB・動画100MBまで。':'ゲスト投稿は文章のみ。写真・動画は登録後に使えます。';if(!registered())note.classList.add('mediaGuestNote');
     input.onchange=()=>{preview.innerHTML='';const f=input.files[0];if(!f)return;const url=URL.createObjectURL(f);let el;if((f.type||'').startsWith('video/')){el=document.createElement('video');el.controls=true;el.playsInline=true;el.className='sonaPostMedia sonaPostMediaVideo'}else{el=document.createElement('img');el.className='sonaPostMedia';el.alt='投稿前プレビュー'}el.src=url;preview.appendChild(el)};
 
     btn.onclick=async()=>{
