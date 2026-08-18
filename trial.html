@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0f6f39">
+<title>そなYELL 試作品</title>
+<style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#eef8e9}iframe{display:block;width:100%;height:100%;border:0}</style>
+</head>
+<body>
+<iframe id="trialApp" src="./enter.html?v=trial1" title="そなYELL 試作品"></iframe>
+<script>
+const frame=document.getElementById('trialApp');
+function getIndexDoc(){
+  try{
+    const enterDoc=frame.contentDocument;
+    const outer=enterDoc&&enterDoc.getElementById('outerApp');
+    const appDoc=outer&&outer.contentDocument;
+    const inner=appDoc&&appDoc.getElementById('appFrame');
+    return inner&&inner.contentDocument?inner.contentDocument:null;
+  }catch(e){return null}
+}
+function installTheme(){
+  const d=getIndexDoc();
+  if(!d)return false;
+  if(d.getElementById('sonaPrototypeThemeLoader'))return true;
+  const s=d.createElement('script');
+  s.id='sonaPrototypeThemeLoader';
+  s.src='./prototype-theme.js?v=1';
+  d.body.appendChild(s);
+  return true;
+}
+frame.addEventListener('load',()=>{
+  let n=0;
+  const t=setInterval(()=>{if(installTheme()||++n>120)clearInterval(t)},100);
+});
+setInterval(installTheme,1000);
+</script>
+</body>
+</html>
