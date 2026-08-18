@@ -9,21 +9,27 @@
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;width:100%;height:100%;background:#0b5f31;overflow:hidden}
 body{display:grid;place-items:center;font-family:"Yu Gothic","Hiragino Kaku Gothic ProN",Meiryo,sans-serif}
-.poster{position:relative;width:min(100vw,66.6667vh);height:min(100vh,150vw);aspect-ratio:2/3;background-image:url('https://raw.githubusercontent.com/eiko07131-max/sonayell/main/assets/start-screen-approved.webp?v=2');background-position:center;background-size:100% 100%;background-repeat:no-repeat;box-shadow:0 0 40px rgba(0,0,0,.22)}
-.hotspot{position:absolute;left:17.5%;width:65%;border:0;background:transparent;cursor:pointer;border-radius:999px;color:transparent;font-size:0;outline:none}
+.poster{position:relative;width:min(100vw,66.6667vh);height:min(100vh,150vw);aspect-ratio:2/3;box-shadow:0 0 40px rgba(0,0,0,.22);background:#0b5f31;overflow:hidden}
+.posterImg{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;display:block}
+.hotspot{position:absolute;left:17.5%;width:65%;border:0;background:transparent;cursor:pointer;border-radius:999px;color:transparent;font-size:0;outline:none;z-index:2}
 .hotspot:focus-visible{outline:4px solid rgba(255,255,255,.95);outline-offset:3px}
 #guestBtn{top:79.1%;height:7.9%}
 #registerBtn{top:88.7%;height:7.2%}
+.loadError{display:none;position:absolute;inset:0;z-index:5;background:#fff;color:#8b1e1e;padding:30px;text-align:center;font-weight:800;align-items:center;justify-content:center}
 @media(max-aspect-ratio:2/3){.poster{width:100vw;height:150vw}}
 @media(min-aspect-ratio:2/3){.poster{height:100vh;width:66.6667vh}}
 </style>
 </head>
 <body>
-<main class="poster" role="img" aria-label="そなYELL。今日の一歩が、未来の安心につながる。">
+<main class="poster" aria-label="そなYELL。今日の一歩が、未来の安心につながる。">
+<img class="posterImg" id="posterImg" src="./assets/start-screen-approved.webp?v=3" alt="そなYELL 立ち上げ画面">
 <button class="hotspot" id="guestBtn" aria-label="ゲストではじめる">ゲストではじめる</button>
 <button class="hotspot" id="registerBtn" aria-label="登録してはじめる">登録してはじめる</button>
+<div class="loadError" id="loadError">合格画像の読み込みに失敗しました。</div>
 </main>
 <script>
+const img=document.getElementById('posterImg');
+img.addEventListener('error',()=>{document.getElementById('loadError').style.display='flex';});
 document.getElementById('guestBtn').addEventListener('click',()=>{
   localStorage.setItem('sonayell_trial_entry','guest');
   location.href='./enter.html?after_login=1&v=8';
