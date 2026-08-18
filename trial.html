@@ -3,38 +3,53 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0f6f39">
+<meta name="theme-color" content="#0b6d38">
 <title>そなYELL 試作品</title>
-<style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#eef8e9}iframe{display:block;width:100%;height:100%;border:0}</style>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html,body{margin:0;min-height:100%;font-family:"Yu Gothic","Hiragino Kaku Gothic ProN",Meiryo,sans-serif;background:#d9f3ff;color:#263c27}button{font:inherit;cursor:pointer}.start{min-height:100svh;position:relative;overflow:hidden;display:flex;justify-content:center;background:linear-gradient(180deg,#82cef4 0%,#d7f3ff 32%,#eef8d7 66%,#75bd5d 100%)}
+.skyGlow{position:absolute;width:380px;height:380px;border-radius:50%;top:-220px;left:50%;transform:translateX(-50%);background:radial-gradient(circle,#fffbd8 0 28%,rgba(255,248,189,.55) 42%,transparent 68%)}
+.hill{position:absolute;left:-10%;right:-10%;height:31%;bottom:-5%;background:#4a9c47;border-radius:50% 50% 0 0/38% 38% 0 0}.hill:before,.hill:after{content:"";position:absolute;bottom:0;width:55%;height:112%;background:#64ad52;border-radius:50% 50% 0 0}.hill:before{left:-10%}.hill:after{right:-10%;background:#377f40}
+.world{position:relative;width:min(100%,760px);min-height:100svh;padding:20px 18px 28px;display:flex;flex-direction:column;align-items:center;z-index:2}
+.catch{font-size:clamp(18px,3.8vw,30px);font-weight:900;text-align:center;line-height:1.35;color:#332e25;text-shadow:0 2px 0 rgba(255,255,255,.8);margin-top:5px}.logo{margin:5px 0 6px;font-weight:1000;font-size:clamp(54px,10vw,88px);line-height:1;color:#075e2f;letter-spacing:-3px;text-shadow:0 3px 0 #fff,0 0 24px rgba(255,255,255,.85)}.logo .leaf{font-size:.8em;vertical-align:9%}.miniLinks{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;position:relative;z-index:8}.miniLinks button{border:1px solid rgba(19,101,49,.22);border-radius:999px;background:rgba(255,255,255,.78);color:#17683a;font-weight:800;padding:7px 13px;font-size:12px}
+.treeWorld{position:relative;width:min(96vw,650px);height:clamp(430px,61svh,620px);margin-top:0}.trunk{position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:150px;height:390px;background:linear-gradient(90deg,#6d3f22,#9b6535 46%,#6e4022);border-radius:70% 70% 20% 20%/20% 20% 10% 10%;box-shadow:inset 17px 0 0 rgba(55,30,14,.14),inset -12px 0 0 rgba(255,210,130,.12)}.trunk:before,.trunk:after{content:"";position:absolute;width:190px;height:55px;background:#7e4c28;border-radius:40px;top:65px}.trunk:before{right:55px;transform:rotate(-35deg);transform-origin:right}.trunk:after{left:55px;transform:rotate(35deg);transform-origin:left}
+.crown{position:absolute;left:50%;top:4px;transform:translateX(-50%);width:470px;height:330px}.cl{position:absolute;border-radius:50%;background:radial-gradient(circle at 35% 25%,#8bcc54 0 10%,#4f9c43 45%,#2f7e38 100%);box-shadow:inset -18px -12px 0 rgba(22,92,39,.12)}.c1{width:290px;height:230px;left:90px;top:0}.c2{width:240px;height:210px;left:0;top:80px}.c3{width:250px;height:220px;right:0;top:76px}.c4{width:280px;height:190px;left:95px;top:130px}
+.fruit{position:absolute;width:33px;height:33px;border-radius:50%;background:radial-gradient(circle at 32% 25%,#ffd66b,#f19938 65%,#cf642d);box-shadow:0 2px 4px rgba(81,50,24,.2)}.f1{left:78px;top:93px}.f2{left:161px;top:48px}.f3{left:254px;top:67px}.f4{left:339px;top:108px}.f5{left:132px;top:176px}.f6{left:226px;top:143px}.f7{left:310px;top:189px}.f8{left:393px;top:164px}
+.treehouse{position:absolute;right:4px;top:168px;width:95px;height:98px;background:#b77a3d;border:5px solid #764923;border-radius:10px;transform:rotate(2deg);box-shadow:0 8px 12px rgba(55,42,20,.18)}.treehouse:before{content:"";position:absolute;left:-13px;top:-35px;border-left:58px solid transparent;border-right:58px solid transparent;border-bottom:46px solid #658b2c;filter:drop-shadow(0 -3px 0 #405f1d)}.treehouse:after{content:"";position:absolute;width:25px;height:38px;background:#644126;border-radius:14px 14px 0 0;left:31px;bottom:0}.window{position:absolute;width:24px;height:24px;border-radius:50%;border:4px solid #644126;background:#fff0aa;left:30px;top:24px}
+.sign{position:absolute;left:50%;top:170px;transform:translateX(-50%);width:min(72%,410px);padding:18px 20px 20px;border:7px solid #9b6c3d;border-radius:13px;background:linear-gradient(#fff7d7,#f5e6bc);box-shadow:inset 0 0 0 2px #d8b77f,0 9px 22px rgba(71,51,29,.18);text-align:center;font-weight:900;font-size:clamp(17px,3.2vw,24px);line-height:1.55;color:#4a3824;z-index:5}.sign:before,.sign:after{content:"🌿";position:absolute;font-size:25px}.sign:before{left:-17px;top:-22px}.sign:after{right:-15px;bottom:-20px}
+.characters{position:absolute;left:50%;bottom:-7px;transform:translateX(-50%);width:100%;height:205px;z-index:6}.girl{position:absolute;left:10%;bottom:6px;font-size:88px;filter:drop-shadow(0 5px 3px rgba(0,0,0,.13))}.animals{position:absolute;right:5%;bottom:2px;font-size:52px;white-space:nowrap;filter:drop-shadow(0 4px 3px rgba(0,0,0,.1))}.bird{position:absolute;left:4%;top:80px;font-size:36px}.rare{position:absolute;right:19%;top:118px;font-size:25px;opacity:.68}
+.sonapee{position:absolute;left:47%;bottom:2px;transform:translateX(-50%);width:130px;height:170px}.hood{position:absolute;width:112px;height:116px;left:9px;top:14px;border-radius:52% 52% 46% 46%;background:#79a813;border:3px solid #4f7810;box-shadow:inset -8px -5px 0 rgba(53,106,24,.13)}.leafL,.leafR{position:absolute;width:45px;height:24px;top:-2px;background:#83b21b;border:3px solid #527d12;z-index:4}.leafL{left:28px;border-radius:90% 10% 90% 10%;transform:rotate(22deg)}.leafR{left:61px;border-radius:10% 90% 10% 90%;transform:rotate(-22deg)}.stem{position:absolute;left:61px;top:10px;width:8px;height:21px;background:#527d12;z-index:3}.face{position:absolute;left:20px;top:28px;width:90px;height:84px;border-radius:48% 48% 46% 46%;background:#fffdf7;z-index:2;border:2px solid #ece5d5}.eye{position:absolute;top:38px;width:12px;height:22px;border-radius:50%;background:#161513;z-index:4}.eye.l{left:43px}.eye.r{right:43px}.cheek{position:absolute;top:67px;width:20px;height:10px;border-radius:50%;background:#f8c3bb;z-index:4}.cheek.l{left:31px}.cheek.r{right:31px}.mouth{position:absolute;left:57px;top:70px;width:20px;height:14px;border-radius:4px 4px 14px 14px;background:#ef7d30;border:2px solid #5a321e;z-index:5}.body{position:absolute;left:24px;top:109px;width:82px;height:58px;border-radius:28px 28px 18px 18px;background:#0d7038;border:3px solid #07552b;z-index:1}.ribbon{position:absolute;left:50px;top:107px;width:34px;height:16px;z-index:6}.ribbon:before,.ribbon:after{content:"";position:absolute;width:18px;height:13px;background:#376c24;border-radius:70% 30% 70% 30%}.ribbon:before{left:0;transform:rotate(18deg)}.ribbon:after{right:0;transform:scaleX(-1) rotate(18deg)}.mega{position:absolute;right:-22px;top:90px;font-size:48px;transform:rotate(-8deg);z-index:8}
+.actions{position:relative;z-index:10;width:min(100%,500px);margin-top:-4px}.startMsg{background:rgba(255,250,237,.94);border:2px solid #e5c989;border-radius:17px;padding:10px 14px;text-align:center;font-weight:900;color:#4d432b;box-shadow:0 4px 13px rgba(70,54,28,.13);margin-bottom:10px}.startBtn{display:block;width:100%;border-radius:999px;padding:15px 18px;margin:8px 0;border:2px solid rgba(255,255,255,.62);font-size:18px;font-weight:900}.guest{background:linear-gradient(#23a050,#086832);color:#fff;box-shadow:0 5px 0 #075128,0 9px 19px rgba(13,88,43,.22)}.register{background:#fffaf0;color:#0d6b36;border-color:#e7ddbe;box-shadow:0 5px 0 #d7cdaa}.note{text-align:center;color:#285b36;font-size:11px;font-weight:700;margin-top:9px}
+.modal{position:fixed;inset:0;background:rgba(18,45,25,.45);display:none;align-items:center;justify-content:center;padding:20px;z-index:50}.modal.on{display:flex}.modalCard{max-width:460px;width:100%;background:#fffdf4;border-radius:24px;padding:24px;box-shadow:0 18px 50px rgba(0,0,0,.22)}.modalCard h2{margin:0 0 10px;color:#0b6734}.modalCard p{line-height:1.8;font-size:14px}.close{width:100%;border:0;border-radius:14px;background:#177c42;color:#fff;font-weight:900;padding:12px;margin-top:10px}
+@media(max-width:540px){.world{padding-top:14px}.treeWorld{height:440px}.crown{transform:translateX(-50%) scale(.82);top:-12px}.trunk{height:330px;width:120px}.sign{top:145px;width:76%;padding:14px 13px;font-size:16px}.treehouse{transform:scale(.78) rotate(2deg);right:-5px;top:148px}.characters{height:155px}.girl{font-size:62px;left:4%}.animals{font-size:38px;right:0}.sonapee{transform:translateX(-50%) scale(.78);transform-origin:bottom center;bottom:-1px}.bird{font-size:29px;top:58px}.rare{top:90px}.actions{margin-top:-9px}.logo{font-size:55px}.catch{font-size:17px}}
+</style>
 </head>
 <body>
-<iframe id="trialApp" src="./enter.html?v=trial1" title="そなYELL 試作品"></iframe>
+<main class="start">
+<div class="skyGlow"></div><div class="hill"></div>
+<section class="world">
+<div class="catch">今日の一歩が、<br>未来の安心につながる。</div>
+<div class="logo"><span class="leaf">🌱</span>そなYELL</div>
+<div class="miniLinks"><button id="aboutBtn">そなYELLって？</button><button id="friendsBtn">そなYELLのなかまたち</button></div>
+<div class="treeWorld">
+<div class="trunk"></div>
+<div class="crown"><i class="cl c1"></i><i class="cl c2"></i><i class="cl c3"></i><i class="cl c4"></i><i class="fruit f1"></i><i class="fruit f2"></i><i class="fruit f3"></i><i class="fruit f4"></i><i class="fruit f5"></i><i class="fruit f6"></i><i class="fruit f7"></i><i class="fruit f8"></i></div>
+<div class="treehouse"><span class="window"></span></div>
+<div class="sign">小さな備えが、<br>あなたと大切な人の<br>未来を守ります。<br>できることから、<br>一緒に始めよう！</div>
+<div class="bird">🕊️</div><div class="rare">🦋</div>
+<div class="characters"><div class="girl">👧🏻</div><div class="sonapee"><span class="leafL"></span><span class="leafR"></span><span class="stem"></span><span class="hood"></span><span class="face"></span><span class="eye l"></span><span class="eye r"></span><span class="cheek l"></span><span class="cheek r"></span><span class="mouth"></span><span class="body"></span><span class="ribbon"></span><span class="mega">📣</span></div><div class="animals">🐿️ 🐻 🐰</div></div>
+</div>
+<div class="actions"><div class="startMsg">🌱 我が家の備えを、一つずつ。</div><button class="startBtn guest" id="guestBtn">🌱 ゲストではじめる</button><button class="startBtn register" id="registerBtn">👤 登録してはじめる</button><div class="note">※ 試作品：機能を残したまま、決定した世界観へ近づけています。</div></div>
+</section>
+</main>
+<div class="modal" id="aboutModal"><div class="modalCard"><h2>🌱 そなYELLって？</h2><p>普段から少しずつ備え、学び、みんなの工夫を共有しながら、防災を続けていくためのアプリです。小さな行動をYELLとして積み重ね、自分の木を育てていきます。</p><button class="close">閉じる</button></div></div>
+<div class="modal" id="friendsModal"><div class="modalCard"><h2>🌳 そなYELLのなかまたち</h2><p>決定キャラクターの「そなピー」を中心に、森の仲間たちがそなYELLの世界であなたの備えを応援します。</p><button class="close">閉じる</button></div></div>
 <script>
-const frame=document.getElementById('trialApp');
-function getIndexDoc(){
-  try{
-    const enterDoc=frame.contentDocument;
-    const outer=enterDoc&&enterDoc.getElementById('outerApp');
-    const appDoc=outer&&outer.contentDocument;
-    const inner=appDoc&&appDoc.getElementById('appFrame');
-    return inner&&inner.contentDocument?inner.contentDocument:null;
-  }catch(e){return null}
-}
-function installTheme(){
-  const d=getIndexDoc();
-  if(!d)return false;
-  if(d.getElementById('sonaPrototypeThemeLoader'))return true;
-  const s=d.createElement('script');
-  s.id='sonaPrototypeThemeLoader';
-  s.src='./prototype-theme.js?v=1';
-  d.body.appendChild(s);
-  return true;
-}
-frame.addEventListener('load',()=>{
-  let n=0;
-  const t=setInterval(()=>{if(installTheme()||++n>120)clearInterval(t)},100);
-});
-setInterval(installTheme,1000);
+const guestBtn=document.getElementById('guestBtn');
+const registerBtn=document.getElementById('registerBtn');
+guestBtn.onclick=()=>{localStorage.setItem('sonayell_trial_guest','1');location.href='./enter.html?after_login=1&v=trial-start2'};
+registerBtn.onclick=()=>{location.href='./register.html?v=trial-start2'};
+function modal(btn,id){const m=document.getElementById(id);document.getElementById(btn).onclick=()=>m.classList.add('on');m.querySelector('.close').onclick=()=>m.classList.remove('on');m.onclick=e=>{if(e.target===m)m.classList.remove('on')}}
+modal('aboutBtn','aboutModal');modal('friendsBtn','friendsModal');
 </script>
 </body>
 </html>
