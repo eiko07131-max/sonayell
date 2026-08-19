@@ -1,6 +1,4 @@
 <!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#4e9956"><title>そなYELL</title><style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#f5faef}iframe{display:block;width:100%;height:100%;border:0}</style></head><body><iframe id="outerApp" title="そなYELL"></iframe><script>
-const U='https://illnptsvaieyacjajlfm.supabase.co';
-const K='sb_publishable_QfSUIWFyzrr0v9t941s8dg_-GPvjwzx';
 const outer=document.getElementById('outerApp');
 
 async function receiveGoogleLogin(){
@@ -11,36 +9,32 @@ async function receiveGoogleLogin(){
   localStorage.setItem('sonayell_access_token',access);
   if(refresh)localStorage.setItem('sonayell_refresh_token',refresh);
   localStorage.setItem('sonayell_registered','1');
-  history.replaceState(null,'',location.pathname+'?after_login=1');
+  history.replaceState(null,'',location.pathname+'?after_login=1&v=12');
   return true;
 }
 
 function goApprovedHome(){
-  location.replace('./enter.html?v=11');
+  window.top.location.href='./home.html?v=12';
 }
 
-function watchLegacyHomeReturn(){
-  let checks=0;
-  const timer=setInterval(()=>{
-    checks++;
-    try{
-      const appDoc=outer.contentDocument;
-      const inner=appDoc&&appDoc.getElementById('appFrame');
-      const d=inner&&inner.contentDocument;
-      if(d){
-        const home=d.getElementById('homeScreen');
-        if(home&&home.classList.contains('active')){
-          clearInterval(timer);
-          goApprovedHome();
-        }
-      }
-    }catch(e){}
-    if(checks>1200)clearInterval(timer);
-  },200);
+function wireApprovedHomeReturn(d){
+  if(!d||d.__approvedHomeWired)return;
+  d.__approvedHomeWired=true;
+  d.addEventListener('click',e=>{
+    const el=e.target&&e.target.closest?e.target.closest('button,a'):null;
+    if(!el)return;
+    const text=(el.textContent||'').replace(/\s+/g,'');
+    const aria=(el.getAttribute('aria-label')||'').replace(/\s+/g,'');
+    if(text.includes('ホームへ戻る')||text==='ホーム'||aria.includes('ホームへ戻る')){
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      goApprovedHome();
+    }
+  },true);
 }
 
 function openTarget(target){
-  outer.src='./app.html?v=11';
+  outer.src='./app.html?v=12';
   let tries=0;
   const jump=()=>{
     tries++;
@@ -50,6 +44,7 @@ function openTarget(target){
       if(inner&&inner.contentWindow&&inner.contentDocument){
         const w=inner.contentWindow;
         const d=inner.contentDocument;
+        wireApprovedHomeReturn(d);
         const screen=d.getElementById(target);
         if(screen){
           if(typeof w.showScreen==='function')w.showScreen(target);
@@ -58,12 +53,11 @@ function openTarget(target){
             screen.classList.add('active');
           }
           if(target==='forestScreen'&&typeof w.renderMyTree==='function')try{w.renderMyTree()}catch(e){}
-          setTimeout(watchLegacyHomeReturn,350);
           return true;
         }
       }
     }catch(e){}
-    if(tries<40)setTimeout(jump,150);
+    if(tries<60)setTimeout(jump,150);
     return false;
   };
   outer.addEventListener('load',()=>setTimeout(jump,100),{once:true});
@@ -75,6 +69,6 @@ function openTarget(target){
   const q=new URLSearchParams(location.search);
   const target=q.get('target');
   if(target)openTarget(target);
-  else outer.src='./home.html?v=11';
+  else outer.src='./home.html?v=12';
 })();
 </script></body></html>
