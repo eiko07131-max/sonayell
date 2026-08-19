@@ -1,5 +1,6 @@
 (function(){
   if(window.__sonaIncomingYellSync)return;
+  if(localStorage.getItem('sonayell_trial_mode')==='1')return;
   window.__sonaIncomingYellSync=true;
   const U='https://illnptsvaieyacjajlfm.supabase.co';
   const K='sb_publishable_QfSUIWFyzrr0v9t941s8dg_-GPvjwzx';
