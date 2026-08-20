@@ -3,7 +3,7 @@
   "short_name": "そなYELL",
   "lang": "ja",
   "id": "./app.html",
-  "start_url": "./app.html",
+  "start_url": "./trial.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait-primary",
