@@ -1,4 +1,4 @@
-const CACHE_NAME = 'sonayell-v5';
+const CACHE_NAME = 'sonayell-v6';
 const APP_SHELL = ['./manifest.json','./app-icon.svg'];
 
 self.addEventListener('install', event => {
