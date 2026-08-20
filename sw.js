@@ -1,4 +1,4 @@
-const CACHE_NAME = 'sonayell-v4';
+const CACHE_NAME = 'sonayell-v5';
 const APP_SHELL = ['./manifest.json','./app-icon.svg'];
 
 self.addEventListener('install', event => {
@@ -21,7 +21,8 @@ self.addEventListener('fetch', event => {
     request.mode === 'navigate' ||
     request.destination === 'document' ||
     url.pathname.endsWith('.html') ||
-    url.pathname.endsWith('.js')
+    url.pathname.endsWith('.js') ||
+    url.pathname.endsWith('/manifest.json')
   );
 
   if (isAppCode) {
