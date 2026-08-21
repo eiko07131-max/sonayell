@@ -1,0 +1,45 @@
+name: Upscale startup screen
+
+on:
+  push:
+    branches: [brushup-dev]
+    paths:
+      - '.github/workflows/upscale-start-screen.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  upscale:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: brushup-dev
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install pillow
+      - name: Upscale approved image exactly
+        run: |
+          python - <<'PY'
+          from PIL import Image, ImageFilter
+          p='assets/start-screen-approved.webp'
+          img=Image.open(p).convert('RGB')
+          w,h=img.size
+          out=img.resize((w*4,h*4), Image.Resampling.LANCZOS)
+          out=out.filter(ImageFilter.UnsharpMask(radius=1.15, percent=115, threshold=2))
+          out.save('assets/start-screen-approved-hd.webp','WEBP',quality=96,method=6)
+          print('source', img.size, 'output', out.size)
+          PY
+      - name: Commit HD image to development branch
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add assets/start-screen-approved-hd.webp
+          git diff --cached --quiet || git commit -m 'Add high-resolution approved startup screen'
+          git push origin HEAD:brushup-dev
+      - uses: actions/upload-artifact@v4
+        with:
+          name: start-screen-approved-hd
+          path: assets/start-screen-approved-hd.webp
