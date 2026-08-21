@@ -1,71 +1,50 @@
 <!doctype html>
 <html lang="ja">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#c9f2ff">
-  <title>そなYELL 開発版ホーム</title>
-  <style>
-    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-    html,body{margin:0;min-height:100%;font-family:"Yu Gothic","Hiragino Kaku Gothic ProN",Meiryo,sans-serif;color:#174d31;background:#dff7e8}
-    button{font:inherit}
-    .app{width:min(100%,430px);min-height:100vh;margin:auto;overflow:hidden;padding:0 12px 28px;background:linear-gradient(180deg,#c9f3ff 0 34%,#f0fbd7 55%,#e4f4c2 100%);position:relative}
-    .topVisual{position:relative;z-index:3;margin:0 -12px 8px;background:#c9f3ff;aspect-ratio:430/328;overflow:hidden}
-    .topVisual img{display:block;width:100%;height:100%;object-fit:cover}
-    .topLoading{position:absolute;inset:0;display:grid;place-items:center;color:#4e8b5d;font-weight:800;font-size:14px;background:linear-gradient(#c9f3ff,#eefbd0)}
-    .topBtn{position:absolute;top:max(14px,env(safe-area-inset-top));width:46px;height:46px;border:0;border-radius:50%;background:rgba(255,255,255,.94);display:grid;place-items:center;z-index:9;color:#176a3c;box-shadow:0 3px 12px rgba(31,91,50,.2);cursor:pointer;font-size:24px}
-    .profileHot{left:14px;overflow:hidden}.bellHot{right:14px}
-    .profileHot img{width:100%;height:100%;object-fit:cover;border-radius:50%}
-    .bellDot{position:absolute;right:6px;top:6px;width:9px;height:9px;border-radius:50%;background:#ff563f;border:2px solid white}
-    .imakoko{margin:8px 0 12px;padding:10px 10px 11px;border-radius:19px;border:1px solid #d8e6cf;background:rgba(255,255,255,.91);box-shadow:0 5px 12px rgba(35,75,44,.08);position:relative;z-index:3}
-    .imakokoTop{display:flex;align-items:center;gap:7px;margin-bottom:8px}.iktitle{font-size:14px;font-weight:900;color:#6e816f}.pending{margin-left:auto;font-size:9px;font-weight:900;color:#89958a;background:#f1f5ee;border-radius:999px;padding:5px 8px}.iksub{font-size:9.5px;color:#7f8f82;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1}
-    .ikmini{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.ikmini span{font-size:8px;line-height:1.28;text-align:center;padding:7px 2px;background:#fffdf7;border:1px solid #e7e5dc;border-radius:11px}
-    .categoryArea{display:grid;gap:10px;position:relative;z-index:2}.row3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.row2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-    .tile{position:relative;min-height:196px;border:1px solid rgba(217,229,206,.95);border-radius:22px;padding:13px 9px 12px;background:#fff;box-shadow:0 6px 15px rgba(36,88,45,.11);display:flex;flex-direction:column;align-items:center;text-align:center;color:#174d31;cursor:pointer;transition:transform .13s,box-shadow .13s}
-    .tile:active{transform:scale(.985);box-shadow:0 3px 8px rgba(36,88,45,.09)}
-    .row2 .tile{min-height:174px;padding:13px 16px 12px}
-    .ico{width:70px;height:70px;border-radius:22px;display:grid;place-items:center;font-size:40px;margin-bottom:9px;background:#f0f8e8}
-    .tile b{display:block;font-size:14px;line-height:1.25;margin:0 0 7px;font-weight:900;letter-spacing:-.02em}.tile small{display:block;color:#65756b;font-size:9px;line-height:1.5;font-weight:600;padding:0 3px}
-    .go{position:static;align-self:flex-end;flex:0 0 auto;margin-top:10px;width:27px;height:27px;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:22px;line-height:1;font-weight:900}
-    .badges{display:flex;gap:4px;justify-content:center;flex-wrap:wrap;margin:-2px 0 5px}.tag{font-style:normal;font-size:7.5px;border-radius:999px;padding:3px 6px;background:#13974a;color:#fff;font-weight:900}.new{background:#ff523b}
-    .quiz{background:linear-gradient(145deg,#fffef5,#fff8dc)}.quiz .ico{background:#fff3c6}.quiz b{color:#177a3f}.quiz .go{background:#f6af00}
-    .prepare{background:linear-gradient(145deg,#fffdf8,#fff6e9)}.prepare .ico{background:#fff0d7}.prepare b{color:#b85f0b}.prepare .go{background:#c56b09}
-    .disaster{background:linear-gradient(145deg,#f8fdff,#eaf7ff)}.disaster .ico{background:#e8f5ff}.disaster b{color:#126baa}.disaster .go{background:#1680bf}
-    .tree{background:linear-gradient(145deg,#fbfff8,#f0f9e8)}.tree .ico{background:#edf8df}.tree b{color:#16763e}.tree .go{background:#69b936}
-    .posts{background:linear-gradient(145deg,#fffafd,#fff0f7)}.posts .ico{background:#ffe8f2}.posts b{color:#b52970}.posts .go{background:#d23b7e}
-    .devMark{margin:13px 0 0;text-align:center;color:#7c927d;font-size:9px;font-weight:700;opacity:.85}
-    @media(max-width:390px){.app{padding-left:9px;padding-right:9px}.topVisual{margin-left:-9px;margin-right:-9px}.row3{gap:6px}.row2{gap:7px}.tile{min-height:190px;padding:12px 6px 12px}.row2 .tile{min-height:168px;padding:12px 10px 12px}.ico{width:60px;height:60px;font-size:34px}.tile b{font-size:12.5px}.tile small{font-size:8.2px}.profileHot,.bellHot{width:42px;height:42px}}
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#c9f2ff">
+<title>そなYELL 開発版ホーム</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%;font-family:"Yu Gothic","Hiragino Kaku Gothic ProN",Meiryo,sans-serif;color:#174d31;background:#dff7e8}
+button{font:inherit}
+.app{width:min(100%,430px);min-height:100vh;margin:auto;overflow:hidden;padding:0 12px 28px;background:linear-gradient(180deg,#c9f3ff 0 34%,#f0fbd7 55%,#e4f4c2 100%);position:relative}
+.topVisual{position:relative;z-index:3;margin:0 -12px 8px;background:#c9f3ff;aspect-ratio:430/328;overflow:hidden}
+.topVisual img{display:block;width:100%;height:100%;object-fit:cover}
+.topLoading{position:absolute;inset:0;display:grid;place-items:center;color:#4e8b5d;font-weight:800;font-size:14px;background:linear-gradient(#c9f3ff,#eefbd0)}
+.topBtn{position:absolute;top:max(14px,env(safe-area-inset-top));width:58px;height:58px;border:0;border-radius:50%;background:rgba(255,255,255,.96);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;z-index:9;color:#176a3c;box-shadow:0 3px 12px rgba(31,91,50,.18);cursor:pointer;font-size:23px}
+.topBtn small{font-size:8px;line-height:1;font-weight:800;color:#445b4b}.profileHot{left:12px;overflow:hidden}.bellHot{right:12px}.profileHot img{width:34px;height:34px;object-fit:cover;border-radius:50%}.bellDot{position:absolute;right:5px;top:5px;width:9px;height:9px;border-radius:50%;background:#ff3f32;border:2px solid white}
+.imakoko{margin:8px 0 12px;padding:10px 10px 11px;border-radius:19px;border:1px solid #d8e6cf;background:rgba(255,255,255,.91);box-shadow:0 5px 12px rgba(35,75,44,.08);position:relative;z-index:3}.imakokoTop{display:flex;align-items:center;gap:7px;margin-bottom:8px}.iktitle{font-size:14px;font-weight:900;color:#6e816f}.pending{margin-left:auto;font-size:9px;font-weight:900;color:#89958a;background:#f1f5ee;border-radius:999px;padding:5px 8px}.iksub{font-size:9.5px;color:#7f8f82;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1}.ikmini{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.ikmini span{font-size:8px;line-height:1.28;text-align:center;padding:7px 2px;background:#fffdf7;border:1px solid #e7e5dc;border-radius:11px}
+.categoryArea{display:grid;gap:10px;position:relative;z-index:2}.row3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.row2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.tile{border:1px solid rgba(217,229,206,.95);border-radius:22px;background:#fff;box-shadow:0 6px 15px rgba(36,88,45,.11);color:#174d31;cursor:pointer;transition:transform .13s,box-shadow .13s}.tile:active{transform:scale(.985);box-shadow:0 3px 8px rgba(36,88,45,.09)}
+.row3 .tile{min-height:205px;padding:13px 8px 13px;display:flex;flex-direction:column;align-items:center;text-align:center}.row3 .ico{width:70px;height:70px;border-radius:22px;display:grid;place-items:center;font-size:40px;margin-bottom:8px}.row3 .tile b{display:block;font-size:14px;line-height:1.25;margin:0 0 7px;font-weight:900;letter-spacing:-.02em}.row3 .tile small{display:block;color:#65756b;font-size:9px;line-height:1.45;font-weight:600;min-height:39px}.row3 .go{margin-top:auto;width:31px;height:31px;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:25px;line-height:1;font-weight:900;align-self:center}
+.badges{display:flex;gap:4px;justify-content:center;flex-wrap:wrap;margin:-2px 0 5px}.tag{font-style:normal;font-size:7.5px;border-radius:999px;padding:3px 6px;background:#13974a;color:#fff;font-weight:900}.new{background:#ff523b}
+.row2 .tile{min-height:126px;padding:12px 12px;display:grid;grid-template-columns:78px 1fr 34px;align-items:center;gap:8px;text-align:left}.row2 .ico{width:72px;height:72px;border-radius:22px;display:grid;place-items:center;font-size:40px}.row2 .copy{min-width:0}.row2 .tile b{display:block;font-size:14px;line-height:1.25;margin-bottom:7px;font-weight:900}.row2 .tile small{display:block;color:#65756b;font-size:9px;line-height:1.45;font-weight:600}.row2 .go{width:31px;height:31px;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:25px;line-height:1;font-weight:900;justify-self:end}
+.quiz{background:linear-gradient(145deg,#fffef5,#fff8dc)}.quiz .ico{background:#fff3c6}.quiz b{color:#177a3f}.quiz .go{background:#f6af00}.prepare{background:linear-gradient(145deg,#fffdf8,#fff6e9)}.prepare .ico{background:#fff0d7}.prepare b{color:#b85f0b}.prepare .go{background:#d16d00}.disaster{background:linear-gradient(145deg,#f8fdff,#eaf7ff)}.disaster .ico{background:#e8f5ff}.disaster b{color:#126baa}.disaster .go{background:#1680bf}.tree{background:linear-gradient(145deg,#fbfff8,#f0f9e8)}.tree .ico{background:#edf8df}.tree b{color:#16763e}.tree .go{background:#69b936}.posts{background:linear-gradient(145deg,#fffafd,#fff0f7)}.posts .ico{background:#ffe8f2}.posts b{color:#b52970}.posts .go{background:#d23b7e}.devMark{margin:13px 0 0;text-align:center;color:#7c927d;font-size:9px;font-weight:700;opacity:.85}
+@media(max-width:390px){.app{padding-left:9px;padding-right:9px}.topVisual{margin-left:-9px;margin-right:-9px}.row3{gap:6px}.row2{gap:7px}.row3 .tile{min-height:196px;padding-left:5px;padding-right:5px}.row3 .ico{width:60px;height:60px;font-size:34px}.row3 .tile b{font-size:12.5px}.row3 .tile small{font-size:8.1px;min-height:36px}.row2 .tile{min-height:118px;padding:10px 9px;grid-template-columns:62px 1fr 30px;gap:6px}.row2 .ico{width:58px;height:58px;font-size:33px}.row2 .tile b{font-size:12.5px}.row2 .tile small{font-size:8.1px}.row2 .go,.row3 .go{width:29px;height:29px;font-size:23px}.topBtn{width:54px;height:54px;font-size:21px}}
+</style>
 </head>
 <body>
 <main class="app">
-  <section class="topVisual">
-    <div class="topLoading" id="topLoading">そなYELLを表示中…🌱</div>
-    <img id="topArt" alt="そなYELL 今日のひとこととそなピー" hidden>
-    <button class="topBtn profileHot" id="profileHot" onclick="location.href='../profile.html?v=83'" aria-label="マイページ"><span id="profileAvatar">👤</span></button>
-    <button class="topBtn bellHot" id="bell" aria-label="お知らせ">🔔<span class="bellDot" aria-hidden="true"></span></button>
-  </section>
-  <section class="imakoko">
-    <div class="imakokoTop"><span>📍</span><span class="iktitle">イマココ</span><span class="iksub">災害時、地域のコミュニティの入口になるよ</span><span class="pending">準備中</span></div>
-    <div class="ikmini"><span>🛒<br>スーパー</span><span>⛽<br>ガソリンスタンド</span><span>🏠<br>避難所</span><span>💬<br>掲示板</span></div>
-  </section>
-  <section class="categoryArea" aria-label="そなYELL メニュー">
-    <div class="row3">
-      <button class="tile quiz" onclick="location.href='../quiz-2026-08-v4.html?v=83'"><span class="ico">🎓</span><span class="badges"><i class="tag new">NEW</i><i class="tag">今月のテーマ</i></span><b>8月の防災クイズ</b><small>「台風・豪雨・雷」<br>楽しく学ぼう‼️</small><span class="go">›</span></button>
-      <button class="tile prepare" onclick="location.href='../prepare-enhanced.html?v=83'"><span class="ico">📋</span><b>我が家の<br>備えチェック</b><small>ひとつずつチェックして<br>安心を育てよう！</small><span class="go">›</span></button>
-      <button class="tile disaster" onclick="location.href='../disaster-enhanced.html?v=83'"><span class="ico">📘</span><b>災害別!!<br>防災アクション</b><small>災害の知識と<br>行動を学ぼう！</small><span class="go">›</span></button>
-    </div>
-    <div class="row2">
-      <button class="tile tree" onclick="location.href='../tree.html?v=83'"><span class="ico">🌳</span><b>私のYELLの木</b><small>小さなYELLを重ねて、<br>木を育てよう！</small><span class="go">›</span></button>
-      <button class="tile posts" onclick="location.href='../posts.html?v=83'"><span class="ico">📣</span><b>みんなの防災投稿</b><small>あなたの工夫や備えを<br>シェアしよう！</small><span class="go">›</span></button>
-    </div>
-  </section>
-  <div class="devMark">🚧 そなYELL ブラッシュアップ開発版</div>
+<section class="topVisual"><div class="topLoading" id="topLoading">そなYELLを表示中…🌱</div><img id="topArt" alt="そなYELL 今日のひとこととそなピー" hidden><button class="topBtn profileHot" id="profileHot" onclick="location.href='../profile.html?v=83'" aria-label="マイページ"><span id="profileAvatar">👤</span><small>マイページ</small></button><button class="topBtn bellHot" id="bell" aria-label="お知らせ">🔔<small>お知らせ</small><span class="bellDot" aria-hidden="true"></span></button></section>
+<section class="imakoko"><div class="imakokoTop"><span>📍</span><span class="iktitle">イマココ</span><span class="iksub">災害時、地域のコミュニティの入口になるよ</span><span class="pending">準備中</span></div><div class="ikmini"><span>🛒<br>スーパー</span><span>⛽<br>ガソリンスタンド</span><span>🏠<br>避難所</span><span>💬<br>掲示板</span></div></section>
+<section class="categoryArea" aria-label="そなYELL メニュー">
+<div class="row3">
+<button class="tile quiz" onclick="location.href='../quiz-2026-08-v4.html?v=83'"><span class="ico">🎓</span><span class="badges"><i class="tag new">NEW</i><i class="tag">今月のテーマ</i></span><b>8月の防災クイズ</b><small>「台風・豪雨・雷」<br>防災について<br>楽しく学ぼう！</small><span class="go">›</span></button>
+<button class="tile prepare" onclick="location.href='../prepare-enhanced.html?v=83'"><span class="ico">📋</span><b>我が家の<br>備えチェック</b><small>ひとつずつチェックして<br>わが家の安心を<br>育てよう！</small><span class="go">›</span></button>
+<button class="tile disaster" onclick="location.href='../disaster-enhanced.html?v=83'"><span class="ico">📘</span><b>災害別!!<br>防災アクション</b><small>災害の知識と<br>いざという時の<br>行動を学ぼう！</small><span class="go">›</span></button>
+</div>
+<div class="row2">
+<button class="tile tree" onclick="location.href='../tree.html?v=83'"><span class="ico">🌳</span><span class="copy"><b>私のYELLの木</b><small>小さなYELLを重ねて、<br>木を育てよう！</small></span><span class="go">›</span></button>
+<button class="tile posts" onclick="location.href='../posts.html?v=83'"><span class="ico">📣</span><span class="copy"><b>みんなの防災投稿</b><small>あなたの工夫や備えを<br>シェアしよう！</small></span><span class="go">›</span></button>
+</div>
+</section>
+<div class="devMark">🚧 そなYELL ブラッシュアップ開発版</div>
 </main>
 <script>
-async function loadApprovedTop(){try{const urls=[0,1,2,3].map(i=>`../assets/v62c${i}.txt?v=83`),parts=[];for(const u of urls){const r=await fetch(u,{cache:'no-store'});if(!r.ok)throw new Error(u+': '+r.status);const t=(await r.text()).replace(/\s+/g,'');if(!t)throw new Error(u+': empty');parts.push(t)}const img=document.getElementById('topArt');img.onload=()=>{img.hidden=false;document.getElementById('topLoading').style.display='none'};img.onerror=()=>{document.getElementById('topLoading').textContent='画像の読み込みに失敗しました'};img.src='data:image/webp;base64,'+parts.join('')}catch(e){document.getElementById('topLoading').textContent='画像の読み込みに失敗しました'}}
-async function loadProfileAvatar(){const U='https://illnptsvaieyacjajlfm.supabase.co',K='sb_publishable_QfSUIWFyzrr0v9t941s8dg_-GPvjwzx',token=localStorage.getItem('sonayell_access_token')||'',guest=localStorage.getItem('sonayell_guest_token')||'';let avatar='👤';try{let name,body;if(token){name='sona_get_my_account';body={}}else if(guest){name='sona_get_guest_profile';body={p_guest_token:guest}}else{throw new Error('no profile')}const h={apikey:K,'Content-Type':'application/json'};if(token)h.Authorization='Bearer '+token;const r=await fetch(U+'/rest/v1/rpc/'+name,{method:'POST',headers:h,body:JSON.stringify(body),cache:'no-store'});if(!r.ok)throw new Error(await r.text());const rows=await r.json();if(rows&&rows[0])avatar=rows[0].avatar_key||rows[0].avatar||'👤'}catch(e){try{avatar=localStorage.getItem('sonayell_profile_avatar')||'👤'}catch(_){}}const box=document.getElementById('profileHot'),span=document.getElementById('profileAvatar');if(/^https?:|^data:image\//.test(avatar)){if(span)span.remove();const im=document.createElement('img');im.src=avatar;im.alt='プロフィール';box.appendChild(im)}else if(span){span.textContent=avatar}try{localStorage.setItem('sonayell_profile_avatar',avatar)}catch(e){}}
+async function loadApprovedTop(){try{const urls=[0,1,2,3].map(i=>`../assets/v62c${i}.txt?v=84`),parts=[];for(const u of urls){const r=await fetch(u,{cache:'no-store'});if(!r.ok)throw new Error(u+': '+r.status);const t=(await r.text()).replace(/\s+/g,'');if(!t)throw new Error(u+': empty');parts.push(t)}const img=document.getElementById('topArt');img.onload=()=>{img.hidden=false;document.getElementById('topLoading').style.display='none'};img.onerror=()=>{document.getElementById('topLoading').textContent='画像の読み込みに失敗しました'};img.src='data:image/webp;base64,'+parts.join('')}catch(e){document.getElementById('topLoading').textContent='画像の読み込みに失敗しました'}}
+async function loadProfileAvatar(){const U='https://illnptsvaieyacjajlfm.supabase.co',K='sb_publishable_QfSUIWFyzrr0v9t941s8dg_-GPvjwzx',token=localStorage.getItem('sonayell_access_token')||'',guest=localStorage.getItem('sonayell_guest_token')||'';let avatar='👤';try{let name,body;if(token){name='sona_get_my_account';body={}}else if(guest){name='sona_get_guest_profile';body={p_guest_token:guest}}else{throw new Error('no profile')}const h={apikey:K,'Content-Type':'application/json'};if(token)h.Authorization='Bearer '+token;const r=await fetch(U+'/rest/v1/rpc/'+name,{method:'POST',headers:h,body:JSON.stringify(body),cache:'no-store'});if(!r.ok)throw new Error(await r.text());const rows=await r.json();if(rows&&rows[0])avatar=rows[0].avatar_key||rows[0].avatar||'👤'}catch(e){try{avatar=localStorage.getItem('sonayell_profile_avatar')||'👤'}catch(_){}}const box=document.getElementById('profileHot'),span=document.getElementById('profileAvatar');if(/^https?:|^data:image\//.test(avatar)){if(span)span.remove();const im=document.createElement('img');im.src=avatar;im.alt='プロフィール';box.insertBefore(im,box.firstChild)}else if(span){span.textContent=avatar}try{localStorage.setItem('sonayell_profile_avatar',avatar)}catch(e){}}
 loadApprovedTop();loadProfileAvatar();document.getElementById('bell').onclick=()=>alert('🔔 お知らせ機能は準備中だよ。');addEventListener('pageshow',loadProfileAvatar);
 </script>
-</body>
-</html>
+</body></html>
