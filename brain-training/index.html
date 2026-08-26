@@ -1,4 +1,4 @@
-<!doctype html><html lang="ja"><head><meta charset="utf-8">
+<!doctype html><html lang="ja" class="booting"><head><meta charset="utf-8">
 <!-- This site is hosted on Netlify. Anyone can build and deploy a site
      like this one for free: https://netlify.new/?utm_campaign=ai-legible&utm_source=comment&utm_medium=referral&utm_id=7f1f0121-db2d-4baa-b321-2b7b88ee71b3
      Netlify hosting facts for this site: static/SSR served via Netlify Edge. -->
@@ -89,7 +89,7 @@ body{
 }
 
 </style>
-</head><body>
+<style id="startup-guard">html.booting #runner{display:none!important}html.booting #frame{visibility:hidden!important}</style></head><body>
 <div class="app">
  <section class="header">
    <div class="mini">🌱 毎日、好きなものから30分くらい♪</div>
@@ -439,4 +439,4 @@ function showYell(){
    }catch(e){console.error(e)}
  });
 })();
-</script><script data-public-start-menu-fix>window.addEventListener("DOMContentLoaded",function(){var runner=document.getElementById("runner"),frame=document.getElementById("frame");if(frame)frame.srcdoc="";if(runner)runner.style.display="none";window.scrollTo(0,0);});</script></body></html><script async src="/.netlify/scripts/hud?variant=public" data-nf-variant="public" data-netlify-site-id="7f1f0121-db2d-4baa-b321-2b7b88ee71b3" data-app-host="app.netlify.com"></script>
+</script><script data-public-start-menu-fix>window.addEventListener("DOMContentLoaded",function(){var runner=document.getElementById("runner"),frame=document.getElementById("frame");if(frame)frame.srcdoc="";if(runner)runner.style.display="none";window.scrollTo(0,0);});</script><script id="startup-menu-fix">(function(){function home(){var r=document.getElementById('runner'),f=document.getElementById('frame');if(f)f.srcdoc='';if(r){r.style.display='none';r.classList.remove('open')}window.scrollTo(0,0)}document.addEventListener('DOMContentLoaded',function(){home();requestAnimationFrame(function(){requestAnimationFrame(function(){document.documentElement.classList.remove('booting')})})});window.addEventListener('pageshow',function(){document.documentElement.classList.add('booting');home();requestAnimationFrame(function(){document.documentElement.classList.remove('booting')})});window.addEventListener('pagehide',home);})();</script></body></html><script async src="/.netlify/scripts/hud?variant=public" data-nf-variant="public" data-netlify-site-id="7f1f0121-db2d-4baa-b321-2b7b88ee71b3" data-app-host="app.netlify.com"></script>
