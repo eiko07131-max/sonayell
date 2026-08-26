@@ -37,6 +37,22 @@ jobs:
           curl --fail --location --retry 3 \
             'https://rrhazswzmwdyrwfhgxbr.supabase.co/functions/v1/brain-training' \
             -o brain-training/index.html
+
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('brain-training/index.html')
+          s=p.read_text(encoding='utf-8')
+          guard='''<style id="startup-guard">html.booting #runner{display:none!important}html.booting #frame{visibility:hidden!important}</style>'''
+          if '<html' in s and 'class="booting"' not in s:
+              s=s.replace('<html lang="ja">','<html lang="ja" class="booting">',1)
+          if 'id="startup-guard"' not in s:
+              s=s.replace('</head>',guard+'</head>',1)
+          boot='''<script id="startup-menu-fix">(function(){function home(){var r=document.getElementById('runner'),f=document.getElementById('frame');if(f)f.srcdoc='';if(r){r.style.display='none';r.classList.remove('open')}window.scrollTo(0,0)}document.addEventListener('DOMContentLoaded',function(){home();requestAnimationFrame(function(){requestAnimationFrame(function(){document.documentElement.classList.remove('booting')})})});window.addEventListener('pageshow',function(){document.documentElement.classList.add('booting');home();requestAnimationFrame(function(){document.documentElement.classList.remove('booting')})});window.addEventListener('pagehide',home);})();</script>'''
+          if 'id="startup-menu-fix"' not in s:
+              s=s.replace('</body>',boot+'</body>',1)
+          p.write_text(s,encoding='utf-8')
+          PY
+
           cp brain-training/index.html _site/brain-training/index.html
           cat > _site/index.html <<'EOF'
           <!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>毎日トレーニング</title></head><body style="font-family:system-ui;padding:24px"><a href="./brain-training/" style="font-size:24px;font-weight:800">毎日トレーニングを開く</a></body></html>
@@ -52,7 +68,7 @@ jobs:
           if git diff --cached --quiet; then
             echo "No repository file change"
           else
-            git commit -m "Publish brain training HTML"
+            git commit -m "Start brain training directly on menu"
             git push
           fi
 
