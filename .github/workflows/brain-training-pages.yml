@@ -8,6 +8,7 @@ on:
       - 'tools/patch_brain_training.py'
       - 'tools/build_mother_version.py'
       - 'brain-training-mother-data/**'
+      - 'mother-assets/**'
   workflow_dispatch:
 
 permissions:
@@ -36,12 +37,13 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p brain-training _site/brain-training _site/mother mother
+          mkdir -p brain-training _site/brain-training _site/mother _site/mother-assets mother
           curl --fail --location --retry 3 \
             'https://rrhazswzmwdyrwfhgxbr.supabase.co/functions/v1/brain-training' \
             -o brain-training/index.html
           python tools/patch_brain_training.py brain-training/index.html
           cp brain-training/index.html _site/brain-training/index.html
+          cp mother-assets/chunk*.txt _site/mother-assets/
           python tools/build_mother_version.py \
             brain-training/index.html \
             brain-training-mother-data \
