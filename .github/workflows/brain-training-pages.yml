@@ -6,6 +6,8 @@ on:
     paths:
       - '.github/workflows/brain-training-pages.yml'
       - 'tools/patch_brain_training.py'
+      - 'tools/build_mother_version.py'
+      - 'brain-training-mother-data/**'
   workflow_dispatch:
 
 permissions:
@@ -30,21 +32,25 @@ jobs:
       - name: Configure Pages
         uses: actions/configure-pages@v5
 
-      - name: Build real HTML file
+      - name: Build public pages
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p brain-training _site/brain-training
+          mkdir -p brain-training _site/brain-training _site/mother
           curl --fail --location --retry 3 \
             'https://rrhazswzmwdyrwfhgxbr.supabase.co/functions/v1/brain-training' \
             -o brain-training/index.html
           python tools/patch_brain_training.py brain-training/index.html
           cp brain-training/index.html _site/brain-training/index.html
+          python tools/build_mother_version.py \
+            brain-training/index.html \
+            brain-training-mother-data \
+            _site/mother/index.html
           cat > _site/index.html <<'EOF'
-          <!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>毎日トレーニング</title></head><body style="font-family:system-ui;padding:24px"><a href="./brain-training/" style="font-size:24px;font-weight:800">毎日トレーニングを開く</a></body></html>
+          <!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>毎日トレーニング</title></head><body style="font-family:system-ui;padding:24px;line-height:2"><a href="./brain-training/" style="font-size:24px;font-weight:800">毎日トレーニングを開く</a><br><a href="./mother/" style="font-size:24px;font-weight:800">お母さん用を開く</a></body></html>
           EOF
 
-      - name: Save game HTML into repository
+      - name: Save base game HTML into repository
         shell: bash
         run: |
           set -euo pipefail
@@ -54,7 +60,7 @@ jobs:
           if git diff --cached --quiet; then
             echo "No repository file change"
           else
-            git commit -m "Fix gift quiz persistence and startup menu"
+            git commit -m "Refresh brain training base HTML"
             git push
           fi
 
