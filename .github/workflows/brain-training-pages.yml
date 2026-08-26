@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -29,17 +29,32 @@ jobs:
       - name: Configure Pages
         uses: actions/configure-pages@v5
 
-      - name: Build brain-training site
+      - name: Build real HTML file
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p _site/brain-training
+          mkdir -p brain-training _site/brain-training
           curl --fail --location --retry 3 \
             'https://rrhazswzmwdyrwfhgxbr.supabase.co/functions/v1/brain-training' \
-            -o _site/brain-training/index.html
+            -o brain-training/index.html
+          cp brain-training/index.html _site/brain-training/index.html
           cat > _site/index.html <<'EOF'
-          <!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>公開ページ</title></head><body><a href="./brain-training/">毎日トレーニングを開く</a></body></html>
+          <!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>毎日トレーニング</title></head><body style="font-family:system-ui;padding:24px"><a href="./brain-training/" style="font-size:24px;font-weight:800">毎日トレーニングを開く</a></body></html>
           EOF
+
+      - name: Save game HTML into repository
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add brain-training/index.html
+          if git diff --cached --quiet; then
+            echo "No repository file change"
+          else
+            git commit -m "Publish brain training HTML"
+            git push
+          fi
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4
