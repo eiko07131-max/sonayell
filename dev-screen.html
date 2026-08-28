@@ -1,0 +1,61 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#eef8e9"><title>そなYELL 開発版</title><style>*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:"Yu Gothic","Hiragino Kaku Gothic ProN",Meiryo,sans-serif;background:#eef8e9;color:#31543a}.loading{min-height:100svh;display:grid;place-items:center;text-align:center;padding:24px;font-weight:900;color:#287642}.loading small{display:block;margin-top:8px;color:#78907c;font-weight:700}</style></head><body><div class="loading">画面を読み込み中…🌱<small>開発版</small></div><script>
+(async()=>{
+const q=new URLSearchParams(location.search),screen=q.get('screen')||'posts';
+const files={posts:'posts.html',quiz:'quiz-2026-08-v4.html',prepare:'prepare.html',disaster:'disaster-v26.html',profile:'profile.html',water:'dev-car-water.html'};
+const srcFile=files[screen]||files.posts;
+try{
+  const r=await fetch('./'+srcFile+'?devsource=20260828',{cache:'no-store'});
+  if(!r.ok)throw new Error('HTTP '+r.status);
+  let s=await r.text();
+
+  // 開発版ではホームへ直接戻す（友達版のファイルは変更しない）
+  s=s.replace(/\.\/home-v30\.html\?[^'\"< )]*/g,'./dev-home.html?v=20260828f')
+     .replace(/\.\/home-v31\.html\?[^'\"< )]*/g,'./dev-home.html?v=20260828f')
+     .replace(/\.\/home\.html\?[^'\"< )]*/g,'./dev-home.html?v=20260828f')
+     .replace(/home-v30\.html\?[^'\"< )]*/g,'dev-home.html?v=20260828f')
+     .replace(/home-v31\.html\?[^'\"< )]*/g,'dev-home.html?v=20260828f')
+     .replace(/\.\/trial\.html\?[^'\"< )]*/g,'./dev-start.html?v=20260828f');
+
+  // YELLの木を廃止した開発版。葉っぱ演出は残し、数値付与だけ止める。
+  if(screen==='posts'){
+    s=s.replace(/;addLocalYell\(1\)/g,';void 0')
+       .replace(/if\(trial\)addLocalYell\(1\);else setYell\(rows\[0\]\.yell%50\)/g,'void 0')
+       .replace(/🌱 投稿したよ！ ＋1 YELL/g,'🌱 投稿したよ！');
+  }
+  if(screen==='quiz'){
+    s=s.replace(/a\.yell=\(\+a\.yell\|\|0\)\+1;a\.leaves=\(\+a\.leaves\|\|0\)\+1;a\.tree_growth=\(\+a\.tree_growth\|\|0\)\+1;saveApp\(a\);leaves\(\);render\(\)/g,'leaves();render()')
+       .replace(/最大10YELL獲得\s*🌿/g,'10問すべて達成 🌿')
+       .replace(/この問題はYELL獲得済み\s*🌿/g,'この問題は確認済み 🌿')
+       .replace(/解説を読んだ！\s*＋1 YELL\s*🌿/g,'解説を読んだ！ 🌿');
+  }
+  if(screen==='prepare'){
+    s=s.replace(/const r=SonaYellCycle\.add\(10\);/g,'const r={madeTrees:0};')
+       .replace(/toast\('🎉 '\+d\.name\+' コンプリート！<br>＋10 YELL 🌳'\+\(r\.madeTrees>0\?'<br>🌳 大樹が1本育ったよ！YELLは0から再スタート！':''\)\);/g,"toast('🎉 '+d.name+' コンプリート！');");
+  }
+  if(screen==='disaster'){
+    s=s.replace(/const result=SonaYellCycle\.add\(1\);/g,'const result={madeTrees:0};')
+       .replace(/○ 確認しました　＋1 YELL/g,'○ 確認しました')
+       .replace(/if\(result\.madeTrees>0\)alert\([^;]+\);/g,'');
+  }
+
+  const active={posts:'投稿',quiz:'クイズ',prepare:'備え',disaster:'防災'}[screen]||'';
+  const nav=`<nav id="devBottomNav" aria-label="画面移動">
+    <a href="./dev-home.html?v=20260828f"><span>🏠</span><b>ホーム</b></a>
+    <a class="${active==='投稿'?'on':''}" href="./dev-screen.html?screen=posts&v=20260828f"><span>📣</span><b>投稿</b></a>
+    <a class="${active==='クイズ'?'on':''}" href="./dev-screen.html?screen=quiz&v=20260828f"><span>🎓</span><b>クイズ</b></a>
+    <a class="${active==='備え'?'on':''}" href="./dev-screen.html?screen=prepare&v=20260828f"><span>📋</span><b>備え</b></a>
+    <a class="${active==='防災'?'on':''}" href="./dev-screen.html?screen=disaster&v=20260828f"><span>📘</span><b>防災</b></a>
+  </nav>`;
+  const css=`<style id="devDirectCss">
+    body{padding-bottom:78px!important}
+    .yell,.y,#yellCount,[class*="yellCount"]{display:none!important}
+    #devBottomNav{position:fixed;left:0;right:0;bottom:0;z-index:99999;height:72px;padding:5px 4px max(5px,env(safe-area-inset-bottom));background:rgba(255,255,255,.97);border-top:1px solid #d7e5d5;box-shadow:0 -4px 15px rgba(39,76,45,.12);display:grid;grid-template-columns:repeat(5,1fr)}
+    #devBottomNav a{text-decoration:none;color:#68736b;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border-radius:12px;font-size:10px;font-weight:900}
+    #devBottomNav a span{font-size:23px;line-height:1}
+    #devBottomNav a.on{color:#08783e;background:#edf8e9}
+  </style>`;
+  s=s.replace('</head>',css+'</head>').replace('</body>',nav+'</body>');
+  document.open();document.write(s);document.close();
+}catch(e){document.body.innerHTML='<div class="loading">画面を読み込めませんでした。<br><small>'+String(e.message||e)+'</small><br><br><a href="./dev-home.html">ホームへ戻る</a></div>'}
+})();
+</script></body></html>
