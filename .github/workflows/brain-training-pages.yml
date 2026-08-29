@@ -53,7 +53,7 @@ jobs:
             _site/mother/index.html
           cp _site/mother/index.html mother/index.html
           cp mother-share/index.html _site/mother-share/index.html
-          cp father/index.html _site/father/index.html
+          cp father/*.html _site/father/
           cp everyone/index.html _site/everyone/index.html
           cat > _site/index.html <<'EOF'
           <!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>毎日頭のトレーニング</title></head><body style="font-family:system-ui;padding:24px;line-height:2.2"><a href="./mother-share/" style="font-size:24px;font-weight:800">お母さん専用を開く</a><br><a href="./father/" style="font-size:24px;font-weight:800">お父さん専用を開く</a><br><a href="./everyone/" style="font-size:24px;font-weight:800">みんな用（空箱版）を開く</a></body></html>
