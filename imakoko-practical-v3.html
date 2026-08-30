@@ -64,4 +64,51 @@ $('reportClose').onclick=()=>{$('reportModal').classList.remove('show');reportTa
 function ttlPaint(){$('ttl').textContent='このカテゴリーは投稿から '+DEF[$('category').value][3]+' で一覧から自動的に外れます。'}$('category').onchange=ttlPaint;ttlPaint();$('fab').onclick=()=>{$('modal').classList.add('show');$('nickname').value=localStorage.getItem('imakoko_test_nickname')||''};$('close').onclick=()=>$('modal').classList.remove('show');$('modal').onclick=e=>{if(e.target===$('modal'))$('modal').classList.remove('show')};$('refresh').onclick=load;$('submit').onclick=async()=>{const n=$('nickname').value.trim(),p=$('place').value.trim(),m=$('message').value.trim(),c=$('category').value;if(!n||!p||!m){$('status').textContent='表示名・場所・状況を入力してね。';return}$('submit').disabled=true;$('status').textContent='共有中…';try{await rpc('imakoko_test_add_post',{p_guest_token:token,p_nickname:n,p_category:c,p_place:p,p_message:m,p_region_key:REGION});localStorage.setItem('imakoko_test_nickname',n);$('place').value='';$('message').value='';toast('✅ イマココに共有しました');$('modal').classList.remove('show');active=c;await load();if(active)requestAnimationFrame(()=>document.querySelector('.sectionhead')?.scrollIntoView({behavior:'smooth',block:'start'}))}catch(e){$('status').textContent='投稿できませんでした。'}finally{$('submit').disabled=false}};
 load();setInterval(pruneExpired,5000);setInterval(load,180000);
 </script>
+<script>
+(()=>{
+  const style=document.createElement('style');
+  style.textContent=`.imasearch{margin:10px 16px 12px;background:#f3f8f1;border:1px solid #d5e3d1;border-radius:17px;padding:11px}.imasearchrow{display:grid;grid-template-columns:1fr auto;gap:8px}.imasearchinput{width:100%;border:2px solid #bfd4bb;border-radius:13px;padding:12px;background:#fff;outline:0;font-size:15px}.imasearchbtn{border:0;border-radius:13px;padding:0 14px;background:#1f8046;color:#fff;font-weight:900}.imasearchclear{width:100%;margin-top:7px;border:0;border-radius:11px;padding:8px;background:#eaf3e7;color:#2b6d40;font-weight:900}.imasearchex{margin-top:6px;font-size:10px;color:#718076;line-height:1.45}.searchhit{margin-top:7px;border-radius:10px;padding:7px 9px;background:#eef6ff;color:#245f91;font-size:11px;font-weight:900}`;
+  document.head.appendChild(style);
+  const box=document.createElement('section');
+  box.className='imasearch';
+  box.innerHTML='<div class="imasearchrow"><input id="imasearchq" class="imasearchinput" placeholder="🔍 例：スマホ充電、三室給水"><button id="imasearchbtn" class="imasearchbtn">検索</button></div><div class="imasearchex">投稿の場所・本文・表示名・返信内容まで検索します。</div><button id="imasearchclear" class="imasearchclear">検索を解除</button>';
+  document.querySelector('.warn')?.insertAdjacentElement('afterend',box);
+  let searchQuery='';
+  const normalize=s=>String(s??'').normalize('NFKC').toLowerCase().replace(/[\s　・,，.。!！?？:：;；「」『』【】()（）\-_/／]/g,'');
+  const grams=s=>{const a=[];for(let i=0;i<s.length-1;i++)a.push(s.slice(i,i+2));return a};
+  const fuzzy=(text,q)=>{const T=normalize(text),Q=normalize(q);if(!Q)return true;if(T.includes(Q))return true;const words=String(q).trim().split(/[\s　]+/).map(normalize).filter(Boolean);if(words.length>1&&words.every(w=>T.includes(w)))return true;if(Q.length<4)return false;const gs=grams(Q);const hits=gs.filter(g=>T.includes(g)).length;return hits>=Math.max(2,Math.ceil(gs.length*.6))};
+  const info=p=>{const main=[DEF[p.category]?.[1]||'',p.place,p.message,p.nickname].join(' ');const mainHit=fuzzy(main,searchQuery);const replyHit=replies.find(r=>r.post_id===p.id&&fuzzy([r.nickname,r.message].join(' '),searchQuery));return {ok:mainHit||!!replyHit,replyHit,mainHit}};
+  const originalRenderPosts=renderPosts;
+  renderPosts=function(){
+    originalRenderPosts();
+    if(!searchQuery)return;
+    let count=0;
+    document.querySelectorAll('.post').forEach(card=>{
+      card.querySelectorAll('.searchhit').forEach(x=>x.remove());
+      const p=all.find(x=>x.id===card.dataset.post),m=p?info(p):{ok:false};
+      card.style.display=m.ok?'':'none';
+      if(m.ok){
+        count++;
+        if(m.replyHit&&!m.mainHit){
+          const note=document.createElement('div');
+          note.className='searchhit';
+          note.textContent='🔎 返信の中に一致：「'+m.replyHit.message+'」';
+          card.querySelector('.postbody')?.appendChild(note);
+        }
+      }
+    });
+    $('listTitle').textContent='🔍「'+searchQuery+'」の検索結果 '+count+'件';
+    if(count===0)$('posts').innerHTML='<div class="empty">該当する公開中の情報は見つかりませんでした。<br>言葉を短くしてもう一度試してね。</div>';
+  };
+  function doSearch(){
+    searchQuery=document.getElementById('imasearchq').value.trim();
+    if(searchQuery){active='';renderCats();}
+    renderPosts();
+    document.querySelector('.sectionhead')?.scrollIntoView({behavior:'smooth',block:'start'});
+  }
+  document.getElementById('imasearchbtn').onclick=doSearch;
+  document.getElementById('imasearchq').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();doSearch()}});
+  document.getElementById('imasearchclear').onclick=()=>{document.getElementById('imasearchq').value='';searchQuery='';renderPosts()};
+})();
+</script>
 </body></html>
