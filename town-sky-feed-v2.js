@@ -6,7 +6,6 @@ let me={nickname:localStorage.getItem('sonayell_profile_nickname')||'ゲスト',
 let photoData='',photoSafe=true,model=null,modelTried=false;
 
 function installApprovedLayout(){
-  const css=document.createElement('link');css.rel='stylesheet';css.href='./town-sky-feed-v2.css?v=20260831j2';document.head.appendChild(css);
   const wrap=document.querySelector('.postbarWrap'),btn=$('openPost');
   if(wrap&&btn){
     btn.innerHTML='<span class="mainLabel">＋ 投稿する</span><span class="subLabel">タップすると投稿画面が開きます</span>';
@@ -17,7 +16,7 @@ function installApprovedLayout(){
 installApprovedLayout();
 
 async function loadVisuals(){
- try{const r=await fetch('./assets/sonapi-official-b64.txt?v=20260831j2',{cache:'no-store'});if(r.ok){const b=(await r.text()).replace(/\s+/g,'');document.querySelectorAll('.sonapiImg').forEach(img=>img.src='data:image/webp;base64,'+b)}}catch(e){}
+ try{const r=await fetch('./assets/sonapi-official-b64.txt?v=20260831k',{cache:'no-store'});if(r.ok){const b=(await r.text()).replace(/\s+/g,'');document.querySelectorAll('.sonapiImg').forEach(img=>img.src='data:image/webp;base64,'+b)}}catch(e){}
 }
 function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(window.__tt);window.__tt=setTimeout(()=>t.classList.remove('show'),1900)}
 function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
