@@ -1,0 +1,4 @@
+.postbarWrap{background:#fff!important;border-top:1px solid #eef2f3!important;box-shadow:0 -7px 20px rgba(28,73,99,.08)!important}
+.sonapiDock{background:#fff!important;overflow:hidden!important;border:0!important}
+.dockSonapi{filter:none!important;mix-blend-mode:multiply!important;width:88px!important;height:110px!important;object-fit:contain!important;object-position:center bottom!important;margin:0!important;transform:translateY(1px)!important}
+@media(max-width:390px){.dockSonapi{width:78px!important;height:100px!important}}
