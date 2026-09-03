@@ -13,12 +13,11 @@ body{min-height:100dvh;overflow-x:hidden;overflow-y:auto}
 button{font:inherit;color:inherit}
 .screen{display:none;min-height:100dvh;width:100%}
 .screen.active{display:flex}
-#launch{height:100dvh;min-height:100dvh;align-items:center;justify-content:flex-start;flex-direction:column;padding:0;background:#eee3ca;overflow:hidden}
-.launch-page{width:min(100vw,817px);height:100%;margin:0 auto;background:#eee3ca;display:flex;flex-direction:column;align-items:center;overflow:hidden;padding:0 0 max(10px,env(safe-area-inset-bottom))}
-.launch-art-wrap{width:100%;flex:1 1 auto;min-height:0;display:flex;align-items:flex-start;justify-content:center;overflow:hidden;line-height:0}
-.launch-art{display:block;max-width:100%;width:auto;height:100%;object-fit:contain;object-position:center top}
-.start-btn{flex:0 0 auto;display:block;width:86%;height:70px;margin:8px auto 10px;border:0;border-radius:26px;background:var(--orange);color:#fff;font-weight:950;font-size:clamp(26px,6vw,36px);box-shadow:0 8px 0 #b64e16;cursor:pointer}
-.start-btn:active{transform:translateY(2px);box-shadow:0 6px 0 #b64e16}
+#launch{height:100svh;min-height:100svh;align-items:center;justify-content:center;padding:0;background:#eee3ca;overflow:hidden}
+.launch-frame{position:relative;width:min(100vw,calc(100svh * 817 / 1536));aspect-ratio:817/1536;margin:auto;line-height:0}
+.launch-art{display:block;width:100%;height:100%;object-fit:contain}
+.start-btn{position:absolute;z-index:5;left:7%;bottom:2%;width:86%;height:9.5%;margin:0;border:0;border-radius:28px;background:transparent;color:transparent;box-shadow:none;cursor:pointer}
+.start-btn:active{background:rgba(255,255,255,.08);transform:none;box-shadow:none}
 .page{width:min(100%,720px);margin:0 auto;padding:max(18px,env(safe-area-inset-top)) 18px calc(30px + env(safe-area-inset-bottom))}
 .topline{display:grid;grid-template-columns:64px 1fr 64px;align-items:center;gap:8px;margin-bottom:16px}
 .back,.gear{border:0;background:transparent;font-size:46px;font-weight:700;line-height:1;min-width:52px;min-height:52px;cursor:pointer}
@@ -76,18 +75,11 @@ button{font:inherit;color:inherit}
 .primary{background:var(--orange);color:#fff}
 .secondary{background:#edf1ef}
 @media (max-height:720px){.game-head{min-height:72px}.board{width:min(90vw,520px)}.tools,.status,.numpad{width:min(90vw,520px)}.tool{min-height:58px}.num{max-height:62px}.game-wrap{padding-top:4px}}
-@media (max-width:360px){.game-wrap{padding-left:8px;padding-right:8px}.game-head{grid-template-columns:58px 1fr 82px}.board,.tools,.status,.numpad{width:96vw}.tools{gap:2px}.num{border-radius:10px}.start-btn{width:88%;font-size:clamp(24px,7vw,34px);height:64px;border-radius:24px}}
+@media (max-width:360px){.game-wrap{padding-left:8px;padding-right:8px}.game-head{grid-template-columns:58px 1fr 82px}.board,.tools,.status,.numpad{width:96vw}.tools{gap:2px}.num{border-radius:10px}}
 </style>
 </head>
 <body>
-<section id="launch" class="screen active">
-  <div class="launch-page">
-    <div class="launch-art-wrap">
-      <img class="launch-art" src="https://nine-patch-puzzle.eiko07131.chatgpt.site/assets/launch.png" alt="NINE PATCH ハカセと子猫">
-    </div>
-    <button class="start-btn" id="startBtn" aria-label="はじめる">はじめる</button>
-  </div>
-</section>
+<section id="launch" class="screen active"><div class="launch-frame"><img class="launch-art" src="https://nine-patch-puzzle.eiko07131.chatgpt.site/assets/launch.png" alt="NINE PATCH ハカセと子猫"><button class="start-btn" id="startBtn" aria-label="はじめる">はじめる</button></div></section>
 <section id="select" class="screen"><main class="page"><div class="topline"><span></span><div><div class="brand">NINE PATCH</div><div class="subbrand">数字パズル</div></div><button class="gear" id="settingsBtn" aria-label="設定">⚙</button></div><div class="title">難しさを選ぶ</div><div class="levels"><button class="level" data-level="easy"><strong>初級</strong><span>久しぶりでも気持ちよく解ける</span><small>全3問</small></button><button class="level" data-level="mid"><strong>中級</strong><span>メモを使ってじっくり</span><small>全3問</small></button><button class="level" data-level="hard"><strong>上級</strong><span>本気で考える</span><small>全3問</small></button></div><div class="prototype">試作版：遊びにくい所を遠慮なく教えてね</div></main></section>
 <section id="game" class="screen"><main class="game-wrap"><div class="game-head"><button class="back" id="backBtn" aria-label="戻る">‹</button><div class="game-center"><div class="diff" id="diffLabel">初級</div><div class="count" id="puzzleCount">1 / 3</div></div><div class="timer" id="timer">00:00</div></div><div class="board-shell"><div class="board" id="board" aria-label="9×9 数独盤"></div></div><div class="tools"><button class="tool" id="undoBtn"><span class="ico">↶</span><span>戻す</span></button><button class="tool" id="eraseBtn"><span class="ico">⌫</span><span>消す</span></button><button class="tool" id="memoBtn"><span class="ico">✎</span><span>メモ</span></button><button class="tool" id="hintBtn"><span class="ico">💡</span><span>ヒント</span></button></div><div class="status" id="status">マスを選んでから、数字を押してね</div><div class="numpad" id="numpad"></div></main></section>
 <div class="modal" id="settingsModal"><div class="card"><h2>遊び方</h2><ol><li>横の一列に1〜9を1回ずつ。</li><li>縦の一列にも1〜9を1回ずつ。</li><li>太枠の3×3の中にも1〜9を1回ずつ。</li></ol><p><b>数字の入れ方：</b><br>入れたいマスを選ぶ → 下の数字を押す。</p><p>間違えても大丈夫。自分で気づいて、消して、また修理できます。</p><button class="close" id="settingsClose">わかった！</button></div></div>
