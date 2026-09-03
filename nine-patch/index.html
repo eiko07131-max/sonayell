@@ -13,12 +13,12 @@ body{min-height:100dvh;overflow-x:hidden;overflow-y:auto}
 button{font:inherit;color:inherit}
 .screen{display:none;min-height:100dvh;width:100%}
 .screen.active{display:flex}
-#launch{align-items:flex-start;justify-content:flex-start;flex-direction:column;padding:0;background:#eee3ca}
-.launch-page{width:min(100vw,817px);margin:0 auto;background:#eee3ca;padding-bottom:max(16px,env(safe-area-inset-bottom))}
-.launch-art-wrap{position:relative;width:100%;line-height:0;overflow:hidden}
-.launch-art{display:block;width:100%;height:auto}
-.start-btn{display:block;width:86%;margin:12px auto 0;border:0;border-radius:28px;background:var(--orange);color:#fff;font-weight:950;font-size:clamp(26px,6vw,36px);padding:22px 12px;box-shadow:0 10px 0 #b64e16;cursor:pointer}
-.start-btn:active{transform:translateY(2px);box-shadow:0 8px 0 #b64e16}
+#launch{height:100dvh;min-height:100dvh;align-items:center;justify-content:flex-start;flex-direction:column;padding:0;background:#eee3ca;overflow:hidden}
+.launch-page{width:min(100vw,817px);height:100%;margin:0 auto;background:#eee3ca;display:flex;flex-direction:column;align-items:center;overflow:hidden;padding:0 0 max(10px,env(safe-area-inset-bottom))}
+.launch-art-wrap{width:100%;flex:1 1 auto;min-height:0;display:flex;align-items:flex-start;justify-content:center;overflow:hidden;line-height:0}
+.launch-art{display:block;max-width:100%;width:auto;height:100%;object-fit:contain;object-position:center top}
+.start-btn{flex:0 0 auto;display:block;width:86%;height:70px;margin:8px auto 10px;border:0;border-radius:26px;background:var(--orange);color:#fff;font-weight:950;font-size:clamp(26px,6vw,36px);box-shadow:0 8px 0 #b64e16;cursor:pointer}
+.start-btn:active{transform:translateY(2px);box-shadow:0 6px 0 #b64e16}
 .page{width:min(100%,720px);margin:0 auto;padding:max(18px,env(safe-area-inset-top)) 18px calc(30px + env(safe-area-inset-bottom))}
 .topline{display:grid;grid-template-columns:64px 1fr 64px;align-items:center;gap:8px;margin-bottom:16px}
 .back,.gear{border:0;background:transparent;font-size:46px;font-weight:700;line-height:1;min-width:52px;min-height:52px;cursor:pointer}
@@ -76,7 +76,7 @@ button{font:inherit;color:inherit}
 .primary{background:var(--orange);color:#fff}
 .secondary{background:#edf1ef}
 @media (max-height:720px){.game-head{min-height:72px}.board{width:min(90vw,520px)}.tools,.status,.numpad{width:min(90vw,520px)}.tool{min-height:58px}.num{max-height:62px}.game-wrap{padding-top:4px}}
-@media (max-width:360px){.game-wrap{padding-left:8px;padding-right:8px}.game-head{grid-template-columns:58px 1fr 82px}.board,.tools,.status,.numpad{width:96vw}.tools{gap:2px}.num{border-radius:10px}.start-btn{width:88%;font-size:clamp(24px,7vw,34px);padding:18px 10px;border-radius:24px}}
+@media (max-width:360px){.game-wrap{padding-left:8px;padding-right:8px}.game-head{grid-template-columns:58px 1fr 82px}.board,.tools,.status,.numpad{width:96vw}.tools{gap:2px}.num{border-radius:10px}.start-btn{width:88%;font-size:clamp(24px,7vw,34px);height:64px;border-radius:24px}}
 </style>
 </head>
 <body>
