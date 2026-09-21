@@ -9,15 +9,13 @@
     <link rel="icon" type="image/png" sizes="192x192" href="icons/snow-flower-192.png" />
     <link rel="apple-touch-icon" href="icons/snow-flower-192.png" />
     <link rel="manifest" href="manifest.webmanifest?v=1" />
-    <link rel="stylesheet" href="style.css?v=2" />
+    <link rel="stylesheet" href="style.css?v=3" />
   </head>
   <body>
     <main class="book" aria-label="ハカセとこねことあなたのものがたり　ゆきとこおりのまちへ">
       <section id="reader" class="reader" aria-live="polite">
         <div id="backdrop" class="backdrop" aria-hidden="true"></div>
-        <figure class="page-frame">
-          <img id="page-image" class="page-image" src="pages/01-cover.png" alt="表紙：ハカセとこねことあなたのものがたり　ゆきとこおりのまちへ" draggable="false" />
-        </figure>
+        <figure id="page-frame" class="page-frame" role="img" aria-label="表紙：ハカセとこねことあなたのものがたり　ゆきとこおりのまちへ"></figure>
       </section>
 
       <button id="previous" class="turn previous" type="button" aria-label="前のページへ">‹</button>
@@ -26,6 +24,6 @@
       <p id="counter" class="counter" aria-live="off">1 / 11</p>
       <p class="hint">左右にスワイプ ／ 2本指で拡大・縮小</p>
     </main>
-    <script src="reader.js?v=1"></script>
+    <script src="reader.js?v=2"></script>
   </body>
 </html>

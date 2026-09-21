@@ -21,7 +21,7 @@ let dragStart = null;
 let pinchStart = null;
 let usedPinch = false;
 const pointers = new Map();
-const image = document.querySelector('#page-image');
+const pageFrame = document.querySelector('#page-frame');
 const backdrop = document.querySelector('#backdrop');
 const reader = document.querySelector('#reader');
 const previous = document.querySelector('#previous');
@@ -30,27 +30,28 @@ const counter = document.querySelector('#counter');
 const hint = document.querySelector('.hint');
 const fullscreen = document.querySelector('#fullscreen');
 
-function setView() { image.style.setProperty('--zoom', scale); image.style.setProperty('--pan-x', `${panX}px`); image.style.setProperty('--pan-y', `${panY}px`); }
+function setView() { pageFrame.style.setProperty('--zoom', scale); pageFrame.style.setProperty('--pan-x', `${panX}px`); pageFrame.style.setProperty('--pan-y', `${panY}px`); }
 function resetView() { scale = 1; panX = 0; panY = 0; setView(); }
 function update(page) {
   if (page < 0 || page >= pages.length || page === current) return;
   current = page;
-  image.classList.add('changing');
+  pageFrame.classList.add('changing');
   window.setTimeout(() => {
     resetView();
-    image.src = pages[current].src;
-    image.alt = pages[current].alt;
+    pageFrame.style.backgroundImage = `url("${pages[current].src}")`;
+    pageFrame.setAttribute('aria-label', pages[current].alt);
     backdrop.style.backgroundImage = `url("${pages[current].src}")`;
     previous.disabled = current === 0;
     next.disabled = current === pages.length - 1;
     counter.textContent = `${current + 1} / ${pages.length}`;
-    image.classList.remove('changing');
+    pageFrame.classList.remove('changing');
   }, 120);
   hint.classList.add('hidden');
 }
 function go(delta) { update(current + delta); }
 function distance() { const [a, b] = [...pointers.values()]; return Math.hypot(a.x - b.x, a.y - b.y); }
 
+pageFrame.style.backgroundImage = `url("${pages[current].src}")`;
 backdrop.style.backgroundImage = `url("${pages[current].src}")`;
 previous.disabled = true;
 previous.addEventListener('click', () => go(-1));
