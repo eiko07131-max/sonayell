@@ -18,3 +18,9 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#182e64}
 @media(max-width:600px){.turn{width:2.2rem;height:3.35rem;font-size:2.5rem}.hint{font-size:.68rem}}
 @media(orientation:portrait){.landscape,.rotate-note{display:block}.hint{left:auto;right:max(.7rem,env(safe-area-inset-right));transform:none;font-size:.65rem}}
 @media(orientation:landscape) and (max-height:600px){.landscape,.rotate-note,.hint{display:none}.turn{background:#0a1d506b}.page{width:100%;height:100%}}
+
+/* Story caption corrections: source page photos remain unchanged. */
+.correction-layer{position:absolute;left:50%;top:50%;z-index:1;transform:translate(-50%,-50%);pointer-events:none;overflow:visible}
+.correction-patch{position:absolute;z-index:1;background:linear-gradient(120deg,#f8f7f4 0%,#f9f9f7 48%,#f6f4f1 100%);box-shadow:0 0 12px 9px #f8f7f4e8;border-radius:2px}
+.correction-caption{position:absolute;z-index:2;color:#181719;font-family:"Hiragino Kaku Gothic ProN","Yu Gothic","Meiryo",sans-serif;font-weight:800;letter-spacing:.012em;line-height:1.48;white-space:nowrap;text-shadow:0 0 .25px #111}
+.correction-red{color:#ae2633}
